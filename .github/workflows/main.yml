@@ -49,7 +49,7 @@ jobs:
       - name: Migrate database
         env:
           DB_CONNECTION: mysql
-          DB_HOST: localhost
+          DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: kki_db
           DB_USERNAME: root
@@ -58,7 +58,7 @@ jobs:
       - name: Run PHPStan
         env:
           DB_CONNECTION: mysql
-          DB_HOST: localhost
+          DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: kki_db
           DB_USERNAME: root
@@ -67,7 +67,7 @@ jobs:
       - name: Run PHPUnit
         env:
           DB_CONNECTION: mysql
-          DB_HOST: localhost
+          DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: kki_db
           DB_USERNAME: root
