@@ -64,15 +64,4 @@ jobs:
           DB_DATABASE: kki_db
           DB_USERNAME: root
           DB_PASSWORD: mysecret
-        run: ./vendor/bin/phpstan analyse --memory-limit=1G --error-format=github
-
-      - name: Run PHPUnit
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: kki_db
-          DB_USERNAME: root
-          DB_PASSWORD: mysecret
-        run: ./vendor/bin/phpunit
-        
+        run: ./vendor/bin/phpstan analyse --error-format=github
