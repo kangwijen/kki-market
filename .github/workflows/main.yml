@@ -18,7 +18,7 @@ jobs:
         image: mysql:8.0
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: mysecret
           MYSQL_DATABASE: kki_db
         ports:
           - 3306:3306
@@ -53,7 +53,7 @@ jobs:
           DB_PORT: 3306
           DB_DATABASE: kki_db
           DB_USERNAME: root
-          DB_PASSWORD: ""
+          DB_PASSWORD: mysecret
         run: php artisan migrate --force
 
       - name: Run PHPStan
@@ -63,7 +63,7 @@ jobs:
           DB_PORT: 3306
           DB_DATABASE: kki_db
           DB_USERNAME: root
-          DB_PASSWORD: ""
+          DB_PASSWORD: mysecret
         run: vendor/bin/phpstan analyse --memory-limit=1G --error-format=github
 
       - name: Run PHPUnit
@@ -73,6 +73,6 @@ jobs:
           DB_PORT: 3306
           DB_DATABASE: kki_db
           DB_USERNAME: root
-          DB_PASSWORD: ""
+          DB_PASSWORD: mysecret
         run: vendor/bin/phpunit
         
