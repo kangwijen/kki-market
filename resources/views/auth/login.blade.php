@@ -1,38 +1,32 @@
 @extends('layouts.base')
 
 @section('content')
-    <div class="min-h-screen px-4 py-16 mx-auto bg-gray-700 sm:px-6 lg:px-8">
-        <div class="flex-grow max-w-lg mx-auto">
-            <h1 class="text-2xl font-bold text-center text-white sm:text-3xl">Get started today</h1>
-        
-            <form action="/login" class="p-4 mt-6 space-y-4 bg-gray-500 rounded-lg shadow-lg sm:p-6 lg:p-8">
-                <p class="text-lg font-medium text-center text-white">Sign in to your account</p>
-        
-                <div>
-                <label for="email" class="sr-only">Email</label>
-        
-                <div class="relative">
-                    <input type="email" class="w-full p-4 text-sm border-gray-200 rounded-lg shadow-sm pe-12" placeholder="Enter email">
-                </div>
-                </div>
-        
-                <div>
-                <label for="password" class="sr-only">Password</label>
-        
-                <div class="relative">
-                    <input type="password" class="w-full p-4 text-sm border-gray-200 rounded-lg shadow-sm pe-12" placeholder="Enter password">
-                </div>
-                </div>
-        
-                <button type="submit" class="block w-full px-5 py-3 text-sm font-medium text-white bg-indigo-600 rounded-lg">
-                Sign in
-                </button>
-        
-                <p class="text-sm text-center text-gray-200">
-                No account?
-                <a class="underline" href="/register">Sign up</a>
+    <div class="flex items-center justify-center min-h-screen bg-base-300">
+        <div class="w-full max-w-md p-8 space-y-6 rounded-lg shadow-lg bg-base-100">
+            <h1 class="text-4xl font-bold text-center text-primary">Login</h1>
+
+            <div class="form-control">
+                <label class="input-group">
+                    <input type="email" placeholder="Email" class="w-full input input-bordered" />
+                </label>
+            </div>
+
+            <div class="form-control">
+                <label class="input-group">
+                    <input type="password" placeholder="Password" class="w-full input input-bordered" />
+                </label>
+            </div>
+
+            <div class="text-center">
+                <p class="text-sm">
+                    No account? 
+                    <a href="{{ route('register') }}" class="text-primary hover:underline">Create one here</a>.
                 </p>
-            </form>
+            </div>
+
+            <div class="form-control">
+                <button class="w-full btn btn-primary">Login</button>
+            </div>
         </div>
     </div>
 @endsection
