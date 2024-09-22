@@ -1,2 +1,2 @@
 # kki-market
-E-Commerce based on the Laravel framework.
+An e-commerce platform developed using Laravel and MySQL as the primary database.
