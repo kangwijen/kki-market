@@ -14,6 +14,10 @@ Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 
+Route::get('/search', function () {
+    return view('marketplace.search');
+})->name('search');
+
 Route::fallback(function () {
     return view('errors.404');
 });
