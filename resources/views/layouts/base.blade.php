@@ -11,10 +11,9 @@
         <div class="flex-1">
             <a href="{{ route('index') }}" class="text-xl btn btn-ghost">KKI-Market</a>
         </div>
-        <div class="flex-none">
             <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
-        </div>
-    </div>
+        </div>          
+  </div>
 
     @yield('content')
 

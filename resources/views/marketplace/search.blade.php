@@ -44,59 +44,26 @@
                 <input type="text" id="search" placeholder="Search products..." class="input input-bordered" />
             </div>
             <div class="grid grid-cols-3 gap-4">
-                
-                <div class="shadow-xl card bg-base-100">
-                    <figure class="relative">
-                        <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="Shoes" class="object-cover w-full h-48" />
-                        <span class="absolute px-2 py-1 text-xs text-white rounded-full top-2 left-2 bg-primary">20% Off</span>
-                    </figure>
-                    <div class="card-body">
-                        <h3 class="card-title">Stylish Shoes</h3>
-                        <p class="text-lg text-primary">$99.99</p>
-                        <div class="justify-end card-actions">
-                            <button class="btn btn-primary">Buy Now</button>
+
+                @foreach($products as $product)
+                    <div class="shadow-xl card bg-base-100">
+                        <figure class="relative">
+                            <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}" class="object-cover w-full h-48" />
+                            @if(isset($product['discount']))
+                                <span class="absolute px-2 py-1 text-xs text-white rounded-full top-2 left-2 bg-primary">{{ $product['discount'] }}% Off</span>
+                            @endif
+                        </figure>
+                        <div class="card-body">
+                            <h3 class="card-title">{{ $product['name'] }}</h3>
+                            <p class="text-lg text-primary">${{ $product['price'] }}</p>
+                            <div class="justify-between card-actions">
+                                <a href="{{ url('products', ['id' => $product['id']]) }}" class="btn btn-secondary">Details</a>
+                                <button class="btn btn-primary">Add to Cart</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="shadow-xl card bg-base-100">
-                    <figure class="relative">
-                        <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="Shoes" class="object-cover w-full h-48" />
-                        <span class="absolute px-2 py-1 text-xs text-white rounded-full top-2 left-2 bg-primary">20% Off</span>
-                    </figure>
-                    <div class="card-body">
-                        <h3 class="card-title">Stylish Shoes</h3>
-                        <p class="text-lg text-primary">$99.99</p>
-                        <div class="justify-end card-actions">
-                            <button class="btn btn-primary">Buy Now</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="shadow-xl card bg-base-100">
-                    <figure class="relative">
-                        <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="Shoes" class="object-cover w-full h-48" />
-                        <span class="absolute px-2 py-1 text-xs text-white rounded-full top-2 left-2 bg-primary">20% Off</span>
-                    </figure>
-                    <div class="card-body">
-                        <h3 class="card-title">Stylish Shoes</h3>
-                        <p class="text-lg text-primary">$99.99</p>
-                        <div class="justify-end card-actions">
-                            <button class="btn btn-primary">Buy Now</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="shadow-xl card bg-base-100">
-                    <figure class="relative">
-                        <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="Shoes" class="object-cover w-full h-48" />
-                        <span class="absolute px-2 py-1 text-xs text-white rounded-full top-2 left-2 bg-primary">20% Off</span>
-                    </figure>
-                    <div class="card-body">
-                        <h3 class="card-title">Stylish Shoes</h3>
-                        <p class="text-lg text-primary">$99.99</p>
-                        <div class="justify-end card-actions">
-                            <button class="btn btn-primary">Buy Now</button>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
+            
                 
             </div>
         </div>
