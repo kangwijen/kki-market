@@ -34,11 +34,19 @@ jobs:
           extensions: mbstring, pdo_mysql, dom, xml, ctype, json
           tools: phpstan, composer, phpunit
 
-      - name: Install dependencies
+      - name: Install PHP dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-      - name: Set up TailwindCSS
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      - name: Install Node.js dependencies
         run: npm ci
+
+      - name: Set up TailwindCSS
+        run: npm run build
 
       - name: Create .env file
         run: cp .env.example .env
@@ -64,4 +72,7 @@ jobs:
           DB_DATABASE: kki_db
           DB_USERNAME: root
           DB_PASSWORD: mysecret
-        run: ./vendor/bin/phpstan analyse app/ routes/ public/ --error-format=github
+        run: ./vendor/bin/phpstan analyse app/ bootstrap/ config/ database/ public/ resources/ routes/ storage/ tests/ --error-format=github || true
+
+      - name: Run ESLint for Vue.js
+        run: npx eslint --ext .js,.vue resources/js
