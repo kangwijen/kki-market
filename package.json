@@ -6,9 +6,13 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "@eslint/js": "^9.12.0",
         "autoprefixer": "^10.4.20",
         "axios": "^1.7.7",
         "daisyui": "^4.12.10",
+        "eslint": "^9.12.0",
+        "eslint-plugin-vue": "^9.29.0",
+        "globals": "^15.11.0",
         "laravel-vite-plugin": "^1.0",
         "postcss": "^8.4.47",
         "tailwindcss": "^3.4.12",
