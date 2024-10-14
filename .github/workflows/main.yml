@@ -75,4 +75,4 @@ jobs:
         run: ./vendor/bin/phpstan analyse app/ bootstrap/ config/ database/ public/ resources/ routes/ storage/ tests/ --error-format=github || true
 
       - name: Run ESLint for Vue.js
-        run: npx eslint --ext .js,.vue resources/js
+        run: npx eslint resources/js
