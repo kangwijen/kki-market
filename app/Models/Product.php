@@ -2,18 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\ProductDetail;
+use App\Models\TransactionDetail;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'price', 'product_type_id'];
+    protected $fillable = [
+        'name', 
+        'img_path'
+    ];
 
-    public function productType()
+    public function productDetail()
     {
-        return $this->belongsTo(ProductType::class);
+        return $this->hasOne(ProductDetail::class);
     }
 
     public function transactionDetails()

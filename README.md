@@ -1,2 +1,2 @@
 # kki-market
-An e-commerce platform developed using Laravel and MySQL as the primary database.
+E-Commerce single-page application (SPA) based on the Laravel + Vue.js framework with integration to MySQL/MariaDB.
