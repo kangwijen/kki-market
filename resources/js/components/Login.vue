@@ -1,0 +1,93 @@
+<template>
+    <div class="flex items-center justify-center min-h-screen p-4 bg-base-300">
+        <div class="w-full max-w-md p-6 space-y-6 rounded-lg shadow-lg sm:p-8 bg-base-100">
+            <h1 class="text-3xl font-bold text-center sm:text-4xl text-primary">Login</h1>
+            <form @submit.prevent="handleSubmit" class="space-y-4 sm:space-y-6">
+                <div class="form-control">
+                    <label for="email" class="label">
+                    <span class="label-text">Email</span>
+                    </label>
+                    <input
+                    type="email"
+                    id="email"
+                    v-model="email"
+                    placeholder="Email"
+                    class="w-full input input-bordered"
+                    required
+                    />
+                </div>
+                <div class="form-control">
+                    <label for="password" class="label">
+                    <span class="label-text">Password</span>
+                    </label>
+                    <input
+                    type="password"
+                    id="password"
+                    v-model="password"
+                    placeholder="Password"
+                    class="w-full input input-bordered"
+                    required
+                    />
+                </div>
+                <div class="text-center">
+                    <p class="text-sm">
+                    No account?
+                    <router-link to="/register" class="text-primary hover:underline">Create one here</router-link>.
+                    </p>
+                </div>
+                <div class="mt-6 form-control">
+                    <button type="submit" class="w-full btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+        <ErrorPopup v-if="errors.length > 0" :messages="errors" type="error" @close="clearErrors" />
+    </div>
+</template>
+
+<script>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import ErrorPopup from './Popup.vue';
+
+export default {
+    components: {
+        ErrorPopup
+    },
+    setup() {
+        const router = useRouter();
+        const email = ref('');
+        const password = ref('');
+        const errors = ref([]);
+
+        const handleSubmit = async () => {
+            try {
+                const response = await axios.post('/login', {
+                    email: email.value,
+                    password: password.value,
+                });
+                window.dispatchEvent(new Event('login'));
+                router.push('/search');
+            } catch (error) {
+                if (error.response && error.response.data && error.response.data.errors) {
+                    errors.value = Object.values(error.response.data.errors).flat();
+                } else {
+                    errors.value = ['An unexpected error occurred. Please try again.'];
+                }
+            }
+        };
+
+        const clearErrors = () => {
+            errors.value = [];
+        };
+
+        return {
+            email,
+            password,
+            errors,
+            handleSubmit,
+            clearErrors
+        };
+    },
+};
+</script>

@@ -11,7 +11,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'user_detail_id', 'role_id',
+        'username', 'email', 'password', 'role_id',
     ];
 
     protected $hidden = [
@@ -26,9 +26,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function userDetails()
+    public function userDetail()
     {
-        return $this->hasOne(UserDetail::class, 'user_detail_id');
+        return $this->hasOne(UserDetail::class);
     }
 
     public function role()
