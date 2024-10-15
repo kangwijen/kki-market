@@ -30,6 +30,8 @@ export default {
         const router = useRouter();
 
         const checkAuth = async () => {
+            if (isAuthenticated.value) return;
+            
             try {
                 const response = await axios.get('/user')
                 isAuthenticated.value = response.data.authenticated
@@ -62,6 +64,7 @@ export default {
             new Typed('#typewriter', options);
 
             checkAuth();
+            updateCartCount();
         });
 
         watch(isAuthenticated, (newValue) => {

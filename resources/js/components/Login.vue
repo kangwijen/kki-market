@@ -40,7 +40,7 @@
                 </div>
             </form>
         </div>
-        <ErrorPopup v-if="errors.length > 0" :messages="errors" type="error" @close="clearErrors" />
+        <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
     </div>
 </template>
 
@@ -48,17 +48,25 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import ErrorPopup from './Popup.vue';
+import Popup from './Popup.vue'
 
 export default {
-    components: {
-        ErrorPopup
-    },
+    components: { Popup },
     setup() {
         const router = useRouter();
         const email = ref('');
         const password = ref('');
-        const errors = ref([]);
+        const popupShow = ref(false);
+        const popupTitle = ref('');
+        const popupMessage = ref('');
+        const popupType = ref('info');
+
+        const showPopup = (title, message, type = 'info') => {
+            popupTitle.value = title;
+            popupMessage.value = message;
+            popupType.value = type;
+            popupShow.value = true;
+        };
 
         const handleSubmit = async () => {
             try {
@@ -70,23 +78,22 @@ export default {
                 router.push('/search');
             } catch (error) {
                 if (error.response && error.response.data && error.response.data.errors) {
-                    errors.value = Object.values(error.response.data.errors).flat();
+                    const errorMessages = Object.values(error.response.data.errors).flat();
+                    showPopup('Error', errorMessages.join(' '), 'error');
                 } else {
-                    errors.value = ['An unexpected error occurred. Please try again.'];
+                    showPopup('Error', 'An unexpected error occurred. Please try again.', 'error');
                 }
             }
-        };
-
-        const clearErrors = () => {
-            errors.value = [];
         };
 
         return {
             email,
             password,
-            errors,
-            handleSubmit,
-            clearErrors
+            popupShow,
+            popupTitle,
+            popupMessage,
+            popupType,
+            handleSubmit
         };
     },
 };

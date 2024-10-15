@@ -38,6 +38,7 @@
             </div>
             </form>
         </div>
+        <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
     </div>
 </template>
 
@@ -48,47 +49,55 @@ import axios from 'axios';
 import Popup from './Popup.vue';
 
 export default {
-    components: {
-        Popup
-    },
+    components: { Popup },
     setup() {
         const router = useRouter();
         const email = ref('');
         const username = ref('');
         const password = ref('');
         const passwordConfirmation = ref('');
-        const errors = ref([]);
+        const popupShow = ref(false);
+        const popupTitle = ref('');
+        const popupMessage = ref('');
+        const popupType = ref('info');
+
+        const showPopup = (title, message, type = 'info') => {
+            popupTitle.value = title;
+            popupMessage.value = message;
+            popupType.value = type;
+            popupShow.value = true;
+        };
 
         const handleSubmit = async () => {
             try {
                 const response = await axios.post('/register', {
-                email: email.value,
-                username: username.value,
-                password: password.value,
-                password_confirmation: passwordConfirmation.value,
+                    email: email.value,
+                    username: username.value,
+                    password: password.value,
+                    password_confirmation: passwordConfirmation.value,
                 });
+                showPopup('Success', 'Registration successful! Please log in.', 'success');
                 router.push('/login');
             } catch (error) {
                 if (error.response && error.response.data && error.response.data.errors) {
-                errors.value = Object.values(error.response.data.errors).flat();
+                    const errorMessages = Object.values(error.response.data.errors).flat();
+                    showPopup('Error', errorMessages.join(' '), 'error');
                 } else {
-                errors.value = ['An unexpected error occurred. Please try again.'];
+                    showPopup('Error', 'An unexpected error occurred. Please try again.', 'error');
                 }
             }
         };
 
-        const clearErrors = () => {
-            errors.value = [];
-        };
-        
         return {
             email,
             username,
             password,
             passwordConfirmation,
-            errors,
-            handleSubmit,
-            clearErrors
+            popupShow,
+            popupTitle,
+            popupMessage,
+            popupType,
+            handleSubmit
         };
     },
 };

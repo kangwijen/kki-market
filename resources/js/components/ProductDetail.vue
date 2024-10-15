@@ -1,4 +1,7 @@
 <template>
+    <div>
+        
+    </div>
     <div v-if="product" class="min-h-screen p-8 bg-base-300">
         <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
             <div class="flex flex-col space-y-6 md:col-span-2">
@@ -41,19 +44,33 @@
     <div v-else class="flex items-center justify-center min-h-screen">
         <p class="text-xl">Loading...</p>
     </div>
+    <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
 </template>
     
 <script>
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useRoute, useRouter } from 'vue-router'
+import Popup from './Popup.vue'
 
 export default {
+    components: { Popup },
     setup() {
         const route = useRoute()
         const router = useRouter()
         const product = ref(null)
         const quantity = ref(1)
+        const popupShow = ref(false)
+        const popupTitle = ref('')
+        const popupMessage = ref('')
+        const popupType = ref('info')
+
+        const showPopup = (title, message, type = 'info') => {
+            popupTitle.value = title
+            popupMessage.value = message
+            popupType.value = type
+            popupShow.value = true
+        }
 
         const fetchProduct = async () => {
             try {
@@ -90,12 +107,17 @@ export default {
                 await axios.post('/cart', {
                     product_id: product.value.id,
                     quantity: quantity.value
-                })
-                alert('Product added to cart successfully!')
+                }, { withCredentials: true });
+                showPopup('Success', 'Product added to cart successfully!', 'success')
                 updateCartCount()
             } catch (error) {
-                console.error('Error adding to cart:', error)
-                alert('Failed to add product to cart. Please try again.')
+                if (error.response && error.response.status === 400) {
+                    showPopup('Info', error.response.data.message, 'info')
+                } else {
+                    console.error('Error adding to cart:', error)
+                    const message = error.response.data.message || 'An error occurred while adding to cart'
+                    showPopup('Error', message, 'error')
+                }
             }
         }
 
@@ -125,6 +147,10 @@ export default {
             formatPrice,
             incrementQuantity,
             decrementQuantity,
+            popupShow,
+            popupTitle,
+            popupMessage,
+            popupType,
             addToCart,
             buyNow
         }
