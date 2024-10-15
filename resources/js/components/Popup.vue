@@ -1,47 +1,54 @@
 <template>
-    <div v-if="messages.length > 0" class="fixed inset-0 z-50 flex items-center justify-center">
-        <div class="absolute inset-0 bg-black opacity-50"></div>
-        <div class="relative p-6 bg-white rounded-lg shadow-xl">
-            <h2 class="mb-4 text-xl font-bold" :class="popupTitleClass">{{ popupTitle }}</h2>
-            <ul class="mb-4 text-sm text-gray-700">
-                <li v-for="(message, index) in messages" :key="index">{{ message }}</li>
-            </ul>
-            <button @click="closePopup" :class="popupButtonClass">
+    <Teleport to="body">
+        <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center">
+            <div class="absolute inset-0 bg-black opacity-50" @click="close"></div>
+            <div class="relative p-6 bg-white rounded-lg shadow-xl">
+            <h2 class="mb-4 text-xl font-bold" :class="popupTitleClass">{{ title }}</h2>
+            <p class="mb-4 text-sm text-gray-700">{{ message }}</p>
+            <button @click="close" :class="popupButtonClass">
                 Close
             </button>
+            </div>
         </div>
-    </div>
+    </Teleport>
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
     props: {
-        messages: {
-            type: Array,
-            default: () => []
-        },
+        show: Boolean,
+        title: String,
+        message: String,
         type: {
-            type: String,
-            default: 'error',
+        type: String,
+        default: 'error',
+        validator: (value) => ['success', 'error', 'info'].includes(value)
         }
     },
+    emits: ['update:show'],
     computed: {
-        popupTitle() {
-            return this.type === 'success' ? 'Success' : 'Error';
-        },
         popupTitleClass() {
-            return this.type === 'success' ? 'text-green-600' : 'text-red-600';
+        return {
+            'text-green-600': this.type === 'success',
+            'text-red-600': this.type === 'error',
+            'text-blue-600': this.type === 'info'
+        }
         },
         popupButtonClass() {
-            return this.type === 'success'
-                ? 'px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700'
-                : 'px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700';
+        return {
+            'px-4 py-2 text-white rounded hover:bg-opacity-80': true,
+            'bg-green-600': this.type === 'success',
+            'bg-red-600': this.type === 'error',
+            'bg-blue-600': this.type === 'info'
+        }
         }
     },
     methods: {
-        closePopup() {
-            this.$emit('close');
+        close() {
+        this.$emit('update:show', false)
         }
     }
-}
+})
 </script>

@@ -53,15 +53,17 @@
                 <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="['join-item btn', { 'btn-active': currentPage === page }]">{{ page }}</button>
             </div>
         </div>
+        <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
     </div>
 </template>
 
 <script>
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
-import { useRouter } from 'vue-router'
+import Popup from './Popup.vue'
 
 export default {
+    components: { Popup },
     setup() {
         const products = ref([])
         const searchQuery = ref('')
@@ -70,7 +72,17 @@ export default {
         const maxPrice = ref(1000)
         const currentPage = ref(1)
         const itemsPerPage = 12
-        const router = useRouter()
+        const popupShow = ref(false)
+        const popupTitle = ref('')
+        const popupMessage = ref('')
+        const popupType = ref('info')
+
+        const showPopup = (title, message, type = 'info') => {
+            popupTitle.value = title
+            popupMessage.value = message
+            popupType.value = type
+            popupShow.value = true
+        }
 
         const categories = computed(() => {
             if (!Array.isArray(products.value)) {
@@ -122,11 +134,16 @@ export default {
                     product_id: product.id,
                     quantity: 1
                 }, { withCredentials: true });
-                alert('Product added to cart successfully!')
+                showPopup('Success', 'Product added to cart successfully!', 'success')
                 updateCartCount()
             } catch (error) {
-                console.error('Error adding to cart:', error)
-                alert('Failed to add product to cart. Please try again.')
+                if (error.response && error.response.status === 400) {
+                    showPopup('Info', error.response.data.message, 'info')
+                } else {
+                    console.error('Error adding to cart:', error)
+                    const message = error.response.data.message || 'An error occurred while adding to cart'
+                    showPopup('Error', message, 'error')
+                }
             }
         }
 
@@ -175,6 +192,10 @@ export default {
             searchProducts,
             filterProducts,
             changePage,
+            popupShow,
+            popupTitle,
+            popupMessage,
+            popupType,
         }
     },
     methods: {

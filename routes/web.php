@@ -19,7 +19,7 @@ Route::prefix('/api')->middleware('auth:sanctum')->group(function () {
     
     Route::get('/cart', [CartController::class, 'index']);
     Route::post('/cart', [CartController::class, 'store']);
-    Route::put('/cart/{id}', [CartController::class, 'update']);
+    Route::put('/cart/{product_id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/{id}', [CartController::class, 'destroy']);
 });
 

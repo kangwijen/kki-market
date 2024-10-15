@@ -6,38 +6,57 @@
         </div>
         <div v-else class="grid gap-8 md:grid-cols-3">
             <div class="md:col-span-2">
-                <div v-for="item in cartItems" :key="item.id" class="mb-4 shadow-xl card bg-base-100">
-                        <div class="card-body">
-                            <h2 class="card-title">{{ item.product.name }}</h2>
-                            <p>Price: ${{ formatPrice(item.product.product_detail?.price) }}</p>
-                            <div class="flex items-center space-x-2">
-                                <button class="btn btn-square btn-sm" @click="updateQuantity(item, item.quantity - 1)">-</button>
-                                <input type="number" v-model.number="item.quantity" class="w-16 input input-bordered" min="1" :max="item.product.product_detail?.stock" @change="updateQuantity(item, item.quantity)" />
-                                <button class="btn btn-square btn-sm" @click="updateQuantity(item, item.quantity + 1)">+</button>
-                            </div>
-                            <button class="btn btn-error btn-sm" @click="removeFromCart(item)">Remove</button>
-                        </div>
+            <div v-for="item in cartItems" :key="item.id" class="mb-4 shadow-xl card bg-base-100">
+                <div class="card-body">
+                <div class="flex items-center space-x-4">
+                    <img :src="'/storage/' + item.product.img_path" :alt="item.product.name" class="object-cover w-24 h-24 rounded-md">
+                    <div>
+                    <button class="card-title" @click="goToProductDetails(item.product.id)">{{ item.product.name }}</button>
+                    <p>Price: ${{ formatPrice(item.product.product_detail?.price) }}</p>
+                    <div class="flex items-center mt-2 space-x-2">
+                        <button class="btn btn-square btn-sm" @click="updateQuantity(item, item.quantity - 1)">-</button>
+                        <input type="number" v-model.number="item.quantity" class="w-16 input input-bordered" min="1" :max="item.product.product_detail?.stock" @change="updateQuantity(item, item.quantity)" />
+                        <button class="btn btn-square btn-sm" @click="updateQuantity(item, item.quantity + 1)">+</button>
+                    </div>
                     </div>
                 </div>
-                
-                <div class="p-6 shadow-xl card bg-base-100">
-                    <h2 class="mb-4 text-2xl font-semibold">Order Summary</h2>
-                    <div class="mb-4 text-xl">
-                            Total: ${{ formatPrice(cartTotal) }}
-                    </div>
-                    <button class="w-full btn btn-primary" @click="checkout">Proceed to Checkout</button>
+                <button class="mt-4 btn btn-error btn-sm" @click="removeFromCart(item)">Remove</button>
+                </div>
+            </div>
+            </div>
+            
+            <div class="p-6 shadow-xl card bg-base-100">
+            <h2 class="mb-4 text-2xl font-semibold">Order Summary</h2>
+            <div class="mb-4 text-xl">
+                Total: ${{ formatPrice(cartTotal) }}
+            </div>
+            <button class="w-full btn btn-primary" @click="checkout">Proceed to Checkout</button>
             </div>
         </div>
+        <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
     </div>
 </template>
 
 <script>
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
+import Popup from './Popup.vue'
 
 export default {
+    components: { Popup },
     setup() {
         const cartItems = ref([])
+        const popupShow = ref(false)
+        const popupTitle = ref('')
+        const popupMessage = ref('')
+        const popupType = ref('info')
+
+        const showPopup = (title, message, type = 'info') => {
+            popupTitle.value = title
+            popupMessage.value = message
+            popupType.value = type
+            popupShow.value = true
+        }
         
         const fetchCart = async () => {
             try {
@@ -56,11 +75,16 @@ export default {
         const updateQuantity = async (item, newQuantity) => {
             if (newQuantity < 1 || newQuantity > item.product.product_detail?.stock) return
             try {
-                    await axios.put(`/cart/${item.product_id}`, { quantity: newQuantity }, { withCredentials: true })
-                    item.quantity = newQuantity
-                    updateCartCount()
+                await axios.put(`/cart/${item.product_id}`, { quantity: newQuantity }, { withCredentials: true })
+                item.quantity = newQuantity
+                updateCartCount()
             } catch (error) {
+                if (error.response && error.response.status === 400) {
+                    showPopup('Error', error.response.data.message, 'error')
+                } else {
                     console.error('Error updating quantity:', error)
+                    showPopup('Error', 'Failed to update quantity. Please try again.', 'error')
+                }
             }
         }
 
@@ -109,8 +133,17 @@ export default {
             updateQuantity,
             removeFromCart,
             cartTotal,
-            checkout
+            checkout,
+            popupShow,
+            popupTitle,
+            popupMessage,
+            popupType,
         }
-    }
+    },
+    methods: {
+        goToProductDetails(productId) {
+            this.$router.push({ name: 'product.details', params: { id: productId } });
+        },
+    },
 }
 </script>
