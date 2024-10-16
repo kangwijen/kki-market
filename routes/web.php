@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
@@ -26,21 +27,29 @@ Route::prefix('/api')->middleware('auth:sanctum')->group(function () {
 Route::get('/', function () {
     return view('layouts.app');
 })->name('index');
+
 Route::get('/login', function () {
-    return view('layouts.app');
+    return Auth::check() ? redirect('/search') : view('layouts.app');
 })->name('login');
+
 Route::get('/register', function () {
-    return view('layouts.app');
+    return Auth::check() ? redirect('/search') : view('layouts.app');
 })->name('register');
-Route::get('/search', function () {
-    return view('layouts.app');
-})->name('search')->middleware('auth');
-Route::get('/product/{id}', function () {
-    return view('layouts.app');
-})->name('product.details')->middleware('auth');
-Route::get('/cart', function () {
-    return view('layouts.app');
-})->name('cart')->middleware('auth');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/search', function () {
+        return view('layouts.app');
+    })->name('search');
+    Route::get('/product/{id}', function () {
+        return view('layouts.app');
+    })->name('product.details');
+    Route::get('/cart', function () {
+        return view('layouts.app');
+    })->name('cart');
+    Route::get('/products', function () {
+        return view('layouts.app');
+    })->name('products');
+});
 
 Route::fallback(function () {
     return view('layouts.app');
