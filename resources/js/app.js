@@ -8,6 +8,7 @@ import Cart from './components/Cart.vue'
 import Login from './components/Login.vue'
 import Register from './components/Register.vue'
 import Navbar from './components/Navbar.vue'
+import Admin from './components/Admin.vue'
 import axios from 'axios'
 import NotFound from './components/NotFound.vue'
 
@@ -21,6 +22,7 @@ const routes = [
     { path: '/cart', name: 'cart', component: Cart },
     { path: '/login', component: Login },
     { path: '/register', component: Register },
+    { path: '/admin', name: 'admin', component: Admin },
     { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound }
 ]
 

@@ -9,7 +9,12 @@ class ProductDetail extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['product_id', 'price', 'stock', 'sold', 'description', 'category'];
+    protected $fillable = ['product_id', 'price', 'stock', 'sold', 'description'];
+
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
 
     public function product()
     {

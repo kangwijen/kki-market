@@ -52,12 +52,12 @@ export default {
         const popupType = ref('info')
 
         const showPopup = (title, message, type = 'info') => {
-            popupTitle.value = title
-            popupMessage.value = message
-            popupType.value = type
-            popupShow.value = true
+        popupTitle.value = title
+        popupMessage.value = message
+        popupType.value = type
+        popupShow.value = true
         }
-        
+
         const fetchCart = async () => {
             try {
                 const response = await axios.get('/cart');
@@ -71,30 +71,37 @@ export default {
         const formatPrice = (price) => {
             return new Intl.NumberFormat('en-US', { minimumFractionDigits: 0 }).format(price || 0)
         }
-        
+
         const updateQuantity = async (item, newQuantity) => {
-            if (newQuantity < 1 || newQuantity > item.product.product_detail?.stock) return
+            if (newQuantity < 1) {
+                newQuantity = 1;
+            } else if (newQuantity > item.product.product_detail?.stock) {
+                newQuantity = item.product.product_detail.stock;
+            }
             try {
                 await axios.put(`/cart/${item.product_id}`, { quantity: newQuantity }, { withCredentials: true })
                 item.quantity = newQuantity
                 updateCartCount()
+                showPopup('Success', 'Quantity updated successfully', 'success')
             } catch (error) {
                 if (error.response && error.response.status === 400) {
-                    showPopup('Error', error.response.data.message, 'error')
+                showPopup('Error', error.response.data.message, 'error')
                 } else {
-                    console.error('Error updating quantity:', error)
-                    showPopup('Error', 'Failed to update quantity. Please try again.', 'error')
+                console.error('Error updating quantity:', error)
+                showPopup('Error', 'Failed to update quantity. Please try again.', 'error')
                 }
             }
         }
 
         const removeFromCart = async (item) => {
             try {
-                    await axios.delete(`/cart/${item.product_id}`, { withCredentials: true })
-                    cartItems.value = cartItems.value.filter(cartItem => cartItem.product_id !== item.product_id)
-                    updateCartCount()
+                await axios.delete(`/cart/${item.product_id}`, { withCredentials: true })
+                cartItems.value = cartItems.value.filter(cartItem => cartItem.product_id !== item.product_id)
+                updateCartCount()
+                showPopup('Success', 'Item removed from cart', 'success')
             } catch (error) {
-                    console.error('Error removing item from cart:', error)
+                console.error('Error removing item from cart:', error)
+                showPopup('Error', 'Failed to remove item from cart. Please try again.', 'error')
             }
         }
 
@@ -117,7 +124,7 @@ export default {
                     return total + (item.product.product_detail?.price * item.quantity)
             }, 0)
         })
-
+        
         const checkout = () => {
             alert('Checkout functionality not implemented yet.')
         }

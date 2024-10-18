@@ -11,7 +11,7 @@ class UpdateProductDetailRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->privilege_level === 10;
     }
 
     /**
@@ -19,10 +19,14 @@ class UpdateProductDetailRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
-        return [
-            //
-        ];
-    }
+
+     public function rules(): array
+     {
+         return [
+             'description' => 'sometimes|string',
+             'price' => 'sometimes|numeric|min:0',
+             'stock' => 'sometimes|integer|min:0',
+             'img_path' => 'sometimes|string',
+         ];
+     }
 }

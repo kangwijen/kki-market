@@ -12,27 +12,39 @@
             </router-link>
         </div>
     
-        <ErrorPopup :errors="errors" v-if="showErrorPopup" @close="closeErrorPopup" />
+        <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
     </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import Popup from './Popup.vue';
 
 export default {
+    components: { Popup },
     setup() {
-        const errors = ref(['Page not found. Please check the URL and try again.']);
-        const showErrorPopup = ref(true);
+        const popupShow = ref(false)
+        const popupTitle = ref('')
+        const popupMessage = ref('')
+        const popupType = ref('info')
 
-        const closeErrorPopup = () => {
-            showErrorPopup.value = false;
-        };
+        const showPopup = (title, message, type = 'info') => {
+            popupTitle.value = title
+            popupMessage.value = message
+            popupType.value = type
+            popupShow.value = true
+        }
+
+        onMounted(() => {
+            showPopup('Page Not Found', 'The page you are looking for does not exist.', 'error')
+        })
 
         return {
-            errors,
-            showErrorPopup,
-            closeErrorPopup,
-        };
+            popupShow,
+            popupTitle,
+            popupMessage,
+            popupType,
+        }
     },
 };
 </script>
