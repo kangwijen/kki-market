@@ -13,7 +13,8 @@ class ProductTypeController extends Controller
      */
     public function index()
     {
-        //
+        $productTypes = ProductType::all();
+        return response()->json($productTypes);
     }
 
     /**

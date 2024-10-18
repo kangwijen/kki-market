@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ProductDetail;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 
@@ -13,7 +15,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with('productDetail')->get();
+        $products = Product::with('productDetail', 'productType')->get();
         return response()->json($products);
     }
 
@@ -30,7 +32,24 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $product = Product::create($request->except('product_detail'));
+
+            $productDetailData = $request->input('product_detail');
+            $productDetail = new ProductDetail($productDetailData);
+            $product->productDetail()->save($productDetail);
+
+            DB::commit();
+
+            $product->load('productDetail', 'productType');
+
+            return response()->json($product, 201);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => 'Failed to create product: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -38,7 +57,7 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        $product = Product::with('productDetail')->findOrFail($id);
+        $product = Product::with('productDetail', 'productType')->findOrFail($id);
         return response()->json($product);
     }
 
@@ -55,7 +74,13 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        //
+        $product->update($request->validated());
+        
+        if ($request->has('product_detail')) {
+            $product->productDetail()->update($request->input('product_detail'));
+        }
+
+        return response()->json($product->load('productDetail', 'productType'));
     }
 
     /**
@@ -63,6 +88,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        return response()->json(['message' => 'Product deleted successfully']);
     }
 }

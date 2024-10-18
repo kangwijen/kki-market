@@ -17,18 +17,21 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Product A',
                 'img_path' => '1.jpg',
+                'product_type_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'name' => 'Product B',
                 'img_path' => '2.jpg',
+                'product_type_id' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'name' => 'Product C',
                 'img_path' => '3.jpg',
+                'product_type_id' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

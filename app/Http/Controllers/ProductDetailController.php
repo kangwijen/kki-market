@@ -53,7 +53,8 @@ class ProductDetailController extends Controller
      */
     public function update(UpdateProductDetailRequest $request, ProductDetail $productDetail)
     {
-        //
+        $productDetail->update($request->validated());
+        return response()->json($productDetail);
     }
 
     /**

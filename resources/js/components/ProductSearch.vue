@@ -89,14 +89,15 @@ export default {
                 console.error('Products is not an array:', products.value);
                 return [];
             }
-            const categorySet = new Set(products.value.map(p => p.product_detail?.category).filter(Boolean));
+            const categorySet = new Set(products.value.map(p => {return p.product_type.name;}).filter(Boolean));
             return Array.from(categorySet);
         });
+
 
         const filteredProducts = computed(() => {
             return products.value.filter(product => {
                 const matchesSearch = product.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-                const matchesCategory = selectedCategory.value === '' || product.product_detail?.category === selectedCategory.value
+                const matchesCategory = selectedCategory.value === '' || product.product_type?.name === selectedCategory.value;
                 const matchesPrice = (product.product_detail?.price >= minPrice.value && product.product_detail?.price <= maxPrice.value)
                 return matchesSearch && matchesCategory && matchesPrice
             })
@@ -112,10 +113,7 @@ export default {
 
         const fetchProducts = async () => {
             try {
-                const response = await axios.get(
-                    '/products', 
-                    { withCredentials: true }
-                )
+                const response = await axios.get('/products', { withCredentials: true })
                 if (Array.isArray(response.data)) {
                     products.value = response.data
                 } else {

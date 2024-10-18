@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
 
 class StoreProductRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->role_id === 1;
     }
 
     /**
@@ -19,10 +20,15 @@ class StoreProductRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules(Request $request): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'product_type_id' => 'required|exists:product_types,id',
+            'product_detail.description' => 'required|string',
+            'product_detail.price' => 'required|numeric|min:0',
+            'product_detail.stock' => 'required|integer|min:0',
+            'img_path' => 'required|string',
         ];
     }
 }
