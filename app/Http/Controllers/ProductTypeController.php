@@ -30,7 +30,8 @@ class ProductTypeController extends Controller
      */
     public function store(StoreProductTypeRequest $request)
     {
-        //
+        $productType = ProductType::create($request->validated());
+        return response()->json($productType);
     }
 
     /**
@@ -38,7 +39,7 @@ class ProductTypeController extends Controller
      */
     public function show(ProductType $productType)
     {
-        //
+        return response()->json($productType);
     }
 
     /**
@@ -54,14 +55,21 @@ class ProductTypeController extends Controller
      */
     public function update(UpdateProductTypeRequest $request, ProductType $productType)
     {
-        //
-    }
+        $productType->update($request->validated());
 
+        return response()->json($productType);
+    }
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(ProductType $productType)
     {
-        //
+        if ($productType->products()->exists()) {
+            return response()->json(['error' => 'There are still products with this product type.'], 400);
+        }
+    
+        $productType->delete();
+        return response()->json(['message' => 'Product type deleted successfully']);
     }
+    
 }

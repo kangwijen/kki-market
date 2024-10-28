@@ -11,7 +11,7 @@ class UpdateProductDetailRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->privilege_level === 10;
+        return $this->user()->role_id === 1;
     }
 
     /**

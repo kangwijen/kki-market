@@ -20,8 +20,57 @@
             </form>
             </div>
         </div>
+
+        <div class="mb-8 card bg-base-200">
+            <div class="card-body">
+                <h2 class="mb-4 text-2xl card-title">Product Type Management</h2>
+                
+                <div role="tablist" class="tabs tabs-boxed">
+                    <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'create' }" @click="activeTab = 'create'">Create</a>
+                    <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'update' }" @click="activeTab = 'update'">Update</a>
+                    <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'delete' }" @click="activeTab = 'delete'">Delete</a>
+                </div>
+
+                <div v-if="activeTab === 'create'" class="p-4">
+                    <form @submit.prevent="createProductType" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <input v-model="newProductType.name" placeholder="Product Type Name" class="w-full input input-bordered" required>
+                        <button type="submit" class="w-full btn btn-primary sm:col-span-2 lg:col-span-3">
+                            Create Product Type
+                        </button>
+                    </form>
+                </div>
+
+                <div v-if="activeTab === 'update'" class="p-4">
+                    <form @submit.prevent="handleUpdateProductType" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <select v-model="updateForm.id" class="w-full select select-bordered" required @change="handleProductTypeSelect">
+                            <option disabled value="">Select Product Type</option>
+                            <option v-for="type in productTypes" :key="type.id" :value="type.id">
+                                {{ type.name }}
+                            </option>
+                        </select>
+                        <input v-model="updateForm.name" placeholder="New Product Type Name" class="w-full input input-bordered" required>
+                        <button type="submit" class="w-full btn btn-warning sm:col-span-2 lg:col-span-3">
+                            Update Product Type
+                        </button>
+                    </form>
+                </div>
+
+                <div v-if="activeTab === 'delete'" class="p-4">
+                    <form @submit.prevent="handleDeleteProductType" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <select v-model="deleteForm.id" class="w-full select select-bordered" required>
+                            <option disabled value="">Select Product Type</option>
+                            <option v-for="type in productTypes" :key="type.id" :value="type.id">
+                                {{ type.name }}
+                            </option>
+                        </select>
+                        <button type="submit" class="w-full btn btn-error sm:col-span-2 lg:col-span-3">
+                            Delete Product Type
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     
-        <!-- Product List -->
         <div class="space-y-4">
             <div v-for="product in products" :key="product.id" class="shadow-xl card bg-base-100">
             <div class="card-body">
@@ -77,13 +126,7 @@
         </div>
         
         <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
-        <Confirmation
-            v-model:show="confirmationShow"
-            :title="confirmationTitle"
-            :message="confirmationMessage"
-            @confirm="handleConfirmDelete"
-            @cancel="cancelDelete"
-        />
+        <Confirmation v-model:show="confirmationShow" :title="confirmationTitle" :message="confirmationMessage" @confirm="handleConfirmation" @cancel="handleCancelConfirmation" />
     </div>
 </template>
 
@@ -96,26 +139,45 @@ import Confirmation from './Confirmation.vue';
 export default {
     components: { Popup, Confirmation },
     setup() {
-        const products = ref([]);
         const productTypes = ref([]);
-        const popupShow = ref(false);
-        const popupTitle = ref('');
-        const popupMessage = ref('');
-        const popupType = ref('info');
-        const confirmationShow = ref(false);
-        const confirmationTitle = ref('');
-        const confirmationMessage = ref('');
-        const productToDelete = ref(null);
+        const newProductType = ref({
+            name: ''
+        });
+
+        const updateForm = ref({
+            id: '',
+            name: ''
+        });
+
+        const deleteForm = ref({
+            id: ''
+        });
+                
+        const products = ref([]);
         const newProduct = ref({
             name: '',
-            img_path: '',
-            product_type_id: '',
             product_detail: {
                 price: '',
                 description: '',
                 stock: '',
                 discount: 0
-            }
+            },
+            img_path: '',
+            product_type_id: ''
+        });
+
+        const popupShow = ref(false);
+        const popupTitle = ref('');
+        const popupMessage = ref('');
+        const popupType = ref('info');
+
+        const confirmationShow = ref(false);
+        const confirmationTitle = ref('');
+        const confirmationMessage = ref('');
+
+        const deleteState = ref({
+            type: null,
+            id: null
         });
 
         const showPopup = (title, message, type = 'info') => {
@@ -125,54 +187,53 @@ export default {
             popupShow.value = true;
         };
 
-        const fetchProducts = async () => {
+        const fetchProductTypes = async () => {
             try {
-                const response = await axios.get('/products', { withCredentials: true });
-                products.value = response.data;
-                console.log(products.value);
+                const response = await axios.get('/product-types');
+                productTypes.value = response.data;
             } catch (error) {
-                showPopup('Error', error.response.data.message, 'error');
+                showPopup('Error', error.response?.data?.message || 'Failed to fetch product types', 'error');
             }
         };
 
-        const fetchProductTypes = async () => {
+        const fetchProducts = async () => {
             try {
-                const response = await axios.get('/product-types', { withCredentials: true });
-                productTypes.value = response.data;
+                const response = await axios.get('/products');
+                products.value = response.data;
             } catch (error) {
-                showPopup('Error', error.response.data.message, 'error');
+                showPopup('Error', error.response?.data?.message || 'Failed to fetch products', 'error');
             }
         };
 
         const createProduct = async () => {
             try {
-                const productData = {
-                    ...newProduct.value,
-                    product_detail: {
-                        ...newProduct.value.product_detail,
-                        price: parseFloat(newProduct.value.product_detail.price),
-                        stock: parseInt(newProduct.value.product_detail.stock),
-                        discount: parseInt(newProduct.value.product_detail.discount)
-                    }
-                };
-                
-                const response = await axios.post('/product', productData);
+                const response = await axios.post('/product', newProduct.value);
                 products.value.push(response.data);
                 showPopup('Success', 'Product created successfully', 'success');
-                
                 newProduct.value = {
                     name: '',
-                    img_path: '',
-                    product_type_id: '',
                     product_detail: {
                         price: '',
                         description: '',
                         stock: '',
                         discount: 0
-                    }
+                    },
+                    img_path: '',
+                    product_type_id: ''
                 };
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'An error occurred while creating the product', 'error');
+                showPopup('Error', error.response?.data?.message || 'Failed to create product', 'error');
+            }
+        };
+
+        const createProductType = async () => {
+            try {
+                const response = await axios.post('/product-types', newProductType.value);
+                productTypes.value.push(response.data);
+                showPopup('Success', 'Product type created successfully', 'success');
+                newProductType.value = { name: '' };
+            } catch (error) {
+                showPopup('Error', error.response?.data?.message || 'Failed to create product type', 'error');
             }
         };
 
@@ -181,48 +242,96 @@ export default {
                 await axios.put(`/product/${product.id}`, product);
                 showPopup('Success', 'Product updated successfully', 'success');
             } catch (error) {
-                showPopup('Error', error.response.data.message, 'error');
+                showPopup('Error', error.response?.data?.message || 'Failed to update product', 'error');
+            }
+        };
+
+        const handleProductTypeSelect = () => {
+            const selectedType = productTypes.value.find(type => type.id === updateForm.value.id);
+            if (selectedType) {
+                updateForm.value.name = selectedType.name;
+            }
+        };
+
+        const handleUpdateProductType = async () => {
+            try {
+                const response = await axios.put(`/product-types/${updateForm.value.id}`, {
+                    name: updateForm.value.name
+                });
+                
+                const index = productTypes.value.findIndex(type => type.id === updateForm.value.id);
+                if (index !== -1) {
+                    productTypes.value[index] = response.data;
+                }
+                
+                showPopup('Success', 'Product type updated successfully', 'success');
+                updateForm.value = { id: '', name: '' };
+            } catch (error) {
+                showPopup('Error', error.response?.data?.message || 'Failed to update product type', 'error');
             }
         };
 
         const confirmDelete = (id) => {
-            productToDelete.value = id;
-            confirmationTitle.value = 'Confirm Deletion';
+            deleteState.value = {
+                type: 'product',
+                id: id
+            };
+            confirmationTitle.value = 'Confirm Product Deletion';
             confirmationMessage.value = 'Are you sure you want to delete this product?';
             confirmationShow.value = true;
         };
 
-        const handleConfirmDelete = async () => {
-            if (productToDelete.value) {
-                try {
-                    await axios.delete(`/product/${productToDelete.value}`);
-                    products.value = products.value.filter(p => p.id !== productToDelete.value);
+        const handleDeleteProductType = () => {
+            deleteState.value = {
+                type: 'productType',
+                id: deleteForm.value.id
+            };
+            confirmationTitle.value = 'Confirm Product Type Deletion';
+            confirmationMessage.value = 'Are you sure you want to delete this product type? This action cannot be undone.';
+            confirmationShow.value = true;
+        };
+
+        const handleConfirmation = async () => {
+            if (!deleteState.value.id) return;
+
+            try {
+                if (deleteState.value.type === 'product') {
+                    await axios.delete(`/product/${deleteState.value.id}`);
+                    products.value = products.value.filter(p => p.id !== deleteState.value.id);
                     showPopup('Success', 'Product deleted successfully', 'success');
-                } catch (error) {
-                    showPopup('Error', error.response.data.message, 'error');
+                } else if (deleteState.value.type === 'productType') {
+                    await axios.delete(`/product-types/${deleteState.value.id}`);
+                    productTypes.value = productTypes.value.filter(t => t.id !== deleteState.value.id);
+                    deleteForm.value.id = '';
+                    showPopup('Success', 'Product type deleted successfully', 'success');
                 }
-                productToDelete.value = null;
+            } catch (error) {
+                const errorMessage = error.response?.data?.error || `Failed to delete ${deleteState.value.type}`;
+                showPopup('Error', errorMessage, 'error');
+            }
+
+            confirmationShow.value = false;
+            deleteState.value = { type: null, id: null };
+        };
+
+        const handleCancelConfirmation = () => {
+            confirmationShow.value = false;
+            deleteState.value = { type: null, id: null };
+            if (deleteState.value.type === 'productType') {
+                deleteForm.value.id = '';
             }
         };
 
-        const cancelDelete = () => {
-            productToDelete.value = null;
-        };
-
         onMounted(() => {
-            fetchProducts();
             fetchProductTypes();
+            fetchProducts();
         });
 
         return {
-            products,
             productTypes,
+            products,
             newProduct,
-            createProduct,
-            updateProduct,
-            confirmDelete,
-            handleConfirmDelete,
-            cancelDelete,
+            newProductType,
             popupShow,
             popupTitle,
             popupMessage,
@@ -230,7 +339,24 @@ export default {
             confirmationShow,
             confirmationTitle,
             confirmationMessage,
+            updateForm,
+            deleteForm,
+            
+            createProduct,
+            createProductType,
+            updateProduct,
+            confirmDelete,
+            handleConfirmation,
+            handleCancelConfirmation,
+            handleProductTypeSelect,
+            handleUpdateProductType,
+            handleDeleteProductType
         };
     },
+    data() {
+        return {
+            activeTab: 'create'
+        };
+    }
 };
 </script>
