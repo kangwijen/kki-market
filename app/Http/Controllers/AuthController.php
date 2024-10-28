@@ -30,8 +30,15 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
+        $user = Auth::user();
         return response()->json([
-            'authenticated' => auth()
+            'authenticated' => true,
+            'user' => [
+                'id' => $user->id,
+                'email' => $user->email,
+                'username' => $user->username,
+                'isAdmin' => $user->role_id === 1
+            ]
         ]);
     }
 
