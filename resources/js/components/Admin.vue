@@ -1,133 +1,197 @@
 <template>
-    <div class="container p-4 mx-auto">
-        <h1 class="mb-6 text-3xl font-bold text-primary">Admin Dashboard</h1>
-        
-        <!-- Create Product Form -->
-        <div class="mb-8 card bg-base-200">
-            <div class="card-body">
-            <h2 class="mb-4 text-2xl card-title">Create New Product</h2>
-            <form @submit.prevent="createProduct" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <input v-model="newProduct.name" placeholder="Product Name" class="w-full input input-bordered" required>
-                <input v-model="newProduct.product_detail.price" type="number" step="0.01" placeholder="Price" class="w-full input input-bordered" required>
-                <input v-model="newProduct.product_detail.description" placeholder="Description" class="w-full input input-bordered" required>
-                <input v-model="newProduct.product_detail.stock" type="number" step="1" placeholder="Stock" class="w-full input input-bordered" required>
-                <input v-model="newProduct.img_path" placeholder="Image Path" class="w-full input input-bordered" required>
-                <select v-model="newProduct.product_type_id" class="w-full select select-bordered" required>
-                    <option disabled value="">Select Product Type</option>
-                    <option v-for="type in productTypes" :key="type.id" :value="type.id">{{ type.name }}</option>
-                </select>
-                <button type="submit" class="w-full btn btn-primary sm:col-span-2 lg:col-span-3">Create Product</button>
-            </form>
+    <div class="flex flex-col h-screen md:flex-row">
+        <div class="p-4 border-r md:w-64 bg-base-200">
+            <h1 class="mb-6 text-2xl font-bold text-primary">Admin Dashboard</h1>
+            <div class="space-y-4">
+                <a
+                    class="justify-start btn"
+                    :class="{ 'bg-base-300': activeTab === 'createProduct' }"
+                    @click="activeTab = 'createProduct'"
+                >
+                    Create Product
+                </a>
+                <a
+                    class="justify-start btn"
+                    :class="{ 'bg-base-300': activeTab === 'updateProduct' }"
+                    @click="activeTab = 'updateProduct'"
+                >
+                    Update Product
+                </a>
+                <a
+                    class="justify-start btn"
+                    :class="{ 'bg-base-300': activeTab === 'productTypeManagement' }"
+                    @click="activeTab = 'productTypeManagement'"
+                >
+                    Product Type Management
+                </a>
             </div>
         </div>
 
-        <div class="mb-8 card bg-base-200">
-            <div class="card-body">
-                <h2 class="mb-4 text-2xl card-title">Product Type Management</h2>
-                
-                <div role="tablist" class="tabs tabs-boxed">
-                    <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'create' }" @click="activeTab = 'create'">Create</a>
-                    <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'update' }" @click="activeTab = 'update'">Update</a>
-                    <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'delete' }" @click="activeTab = 'delete'">Delete</a>
+        <div class="flex-1 p-4">
+            <div v-if="activeTab === 'createProduct'">
+                <div class="mb-8 card bg-base-200">
+                    <div class="card-body">
+                        <h2 class="mb-4 text-2xl card-title">Create New Product</h2>
+                        <form @submit.prevent="createProduct" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Product Name</span>
+                                </label>
+                                <input v-model="newProduct.name" placeholder="Product Name" class="w-full input input-bordered" required>
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Price</span>
+                                </label>
+                                <input v-model="newProduct.product_detail.price" type="number" step="0.01" placeholder="Price" class="w-full input input-bordered" required>
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Description</span>
+                                </label>
+                                <input v-model="newProduct.product_detail.description" placeholder="Description" class="w-full input input-bordered" required>
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Stock</span>
+                                </label>
+                                <input v-model="newProduct.product_detail.stock" type="number" step="1" placeholder="Stock" class="w-full input input-bordered" required>
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Choose Image</span>
+                                </label>
+                                <input type="file" @change="handleImageUpload($event)" class="w-full file-input file-input-bordered" />
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Product Type</span>
+                                </label>
+                                <select v-model="newProduct.product_type_id" class="w-full select select-bordered" required>
+                                    <option disabled value="">Select Product Type</option>
+                                    <option v-for="type in productTypes" :key="type.id" :value="type.id">{{ type.name }}</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full btn btn-primary sm:col-span-2 lg:col-span-3">Create Product</button>
+                        </form>
+                    </div>
                 </div>
+            </div>
 
-                <div v-if="activeTab === 'create'" class="p-4">
-                    <form @submit.prevent="createProductType" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        <input v-model="newProductType.name" placeholder="Product Type Name" class="w-full input input-bordered" required>
-                        <button type="submit" class="w-full btn btn-primary sm:col-span-2 lg:col-span-3">
-                            Create Product Type
-                        </button>
-                    </form>
+            <div v-if="activeTab === 'updateProduct'">
+                <div class="mb-8 card bg-base-200">
+                    <div class="card-body">
+                        <h2 class="mb-4 text-2xl card-title">Update Product</h2>
+                        <div v-for="product in products" :key="product.id" class="shadow-xl card bg-base-100">
+                            <div class="card-body">
+                                <h2 class="card-title">
+                                <input v-model="product.name" placeholder="Product Name" class="w-full input input-bordered" />
+                                </h2>
+                                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text">Price</span>
+                                    </label>
+                                    <input v-model="product.product_detail.price" type="number" step="0.01" placeholder="Price" class="w-full input input-bordered" />
+                                </div>
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text">Discount</span>
+                                    </label>
+                                    <input v-model="product.product_detail.discount" type="number" step="1" placeholder="Discount" class="w-full input input-bordered" />
+                                </div>
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text">Description</span>
+                                    </label>
+                                    <input v-model="product.product_detail.description" placeholder="Description" class="w-full input input-bordered" />
+                                </div>
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text">Stock</span>
+                                    </label>
+                                    <input v-model="product.product_detail.stock" type="number" step="1" placeholder="Stock" class="w-full input input-bordered" />
+                                </div>
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text">Change Image</span>
+                                    </label>
+                                    <input type="file" @change="handleImageUpload($event, updateProduct)" class="w-full file-input file-input-bordered" />
+                                </div>
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text">Product Type</span>
+                                    </label>
+                                    <select v-model="product.product_type_id" class="w-full select select-bordered">
+                                    <option v-for="type in productTypes" :key="type.id" :value="type.id">{{ type.name }}</option>
+                                    </select>
+                                </div>
+                                </div>
+                                <div class="justify-end card-actions">
+                                <button @click="updateProduct(product)" class="btn btn-primary">Update</button>
+                                <button @click="confirmDelete(product.id)" class="btn btn-error">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <div v-if="activeTab === 'update'" class="p-4">
-                    <form @submit.prevent="handleUpdateProductType" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        <select v-model="updateForm.id" class="w-full select select-bordered" required @change="handleProductTypeSelect">
-                            <option disabled value="">Select Product Type</option>
-                            <option v-for="type in productTypes" :key="type.id" :value="type.id">
-                                {{ type.name }}
-                            </option>
-                        </select>
-                        <input v-model="updateForm.name" placeholder="New Product Type Name" class="w-full input input-bordered" required>
-                        <button type="submit" class="w-full btn btn-warning sm:col-span-2 lg:col-span-3">
-                            Update Product Type
-                        </button>
-                    </form>
-                </div>
+            <div v-if="activeTab === 'productTypeManagement'">
+                <div class="mb-8 card bg-base-200">
+                    <div class="card-body">
+                        <h2 class="mb-4 text-2xl card-title">Product Type Management</h2>
+                        <div role="tablist" class="tabs tabs-boxed">
+                            <a role="tab" class="tab" :class="{ 'tab-active': activeTabProductType === 'create' }" @click="activeTabProductType = 'create'">Create</a>
+                            <a role="tab" class="tab" :class="{ 'tab-active': activeTabProductType === 'update' }" @click="activeTabProductType = 'update'">Update</a>
+                            <a role="tab" class="tab" :class="{ 'tab-active': activeTabProductType === 'delete' }" @click="activeTabProductType = 'delete'">Delete</a>
+                        </div>
 
-                <div v-if="activeTab === 'delete'" class="p-4">
-                    <form @submit.prevent="handleDeleteProductType" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        <select v-model="deleteForm.id" class="w-full select select-bordered" required>
-                            <option disabled value="">Select Product Type</option>
-                            <option v-for="type in productTypes" :key="type.id" :value="type.id">
-                                {{ type.name }}
-                            </option>
-                        </select>
-                        <button type="submit" class="w-full btn btn-error sm:col-span-2 lg:col-span-3">
-                            Delete Product Type
-                        </button>
-                    </form>
+                        <div v-if="activeTabProductType === 'create'" class="p-4">
+                            <form @submit.prevent="createProductType" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                <input v-model="newProductType.name" placeholder="Product Type Name" class="w-full input input-bordered" required>
+                                <button type="submit" class="w-full btn btn-primary sm:col-span-2 lg:col-span-3">
+                                    Create Product Type
+                                </button>
+                            </form>
+                        </div>
+
+                        <div v-if="activeTabProductType === 'update'" class="p-4">
+                            <form @submit.prevent="handleUpdateProductType" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                <select v-model="updateForm.id" class="w-full select select-bordered" required @change="handleProductTypeSelect">
+                                    <option disabled value="">Select Product Type</option>
+                                    <option v-for="type in productTypes" :key="type.id" :value="type.id">
+                                        {{ type.name }}
+                                    </option>
+                                </select>
+                                <input v-model="updateForm.name" placeholder="New Product Type Name" class="w-full input input-bordered" required>
+                                <button type="submit" class="w-full btn btn-warning sm:col-span-2 lg:col-span-3">
+                                    Update Product Type
+                                </button>
+                            </form>
+                        </div>
+
+                        <div v-if="activeTabProductType === 'delete'" class="p-4">
+                            <form @submit.prevent="handleDeleteProductType" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                <select v-model="deleteForm.id" class="w-full select select-bordered" required>
+                                    <option disabled value="">Select Product Type</option>
+                                    <option v-for="type in productTypes" :key="type.id" :value="type.id">
+                                        {{ type.name }}
+                                    </option>
+                                </select>
+                                <button type="submit" class="w-full btn btn-error sm:col-span-2 lg:col-span-3">
+                                    Delete Product Type
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    
-        <div class="space-y-4">
-            <div v-for="product in products" :key="product.id" class="shadow-xl card bg-base-100">
-            <div class="card-body">
-                <h2 class="card-title">
-                <input v-model="product.name" placeholder="Product Name" class="w-full input input-bordered" />
-                </h2>
-                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <div class="form-control">
-                    <label class="label">
-                    <span class="label-text">Price</span>
-                    </label>
-                    <input v-model="product.product_detail.price" type="number" step="0.01" placeholder="Price" class="w-full input input-bordered" />
-                </div>
-                <div class="form-control">
-                    <label class="label">
-                    <span class="label-text">Discount</span>
-                    </label>
-                    <input v-model="product.product_detail.discount" type="number" step="1" placeholder="Discount" class="w-full input input-bordered" />
-                </div>
-                <div class="form-control">
-                    <label class="label">
-                    <span class="label-text">Description</span>
-                    </label>
-                    <input v-model="product.product_detail.description" placeholder="Description" class="w-full input input-bordered" />
-                </div>
-                <div class="form-control">
-                    <label class="label">
-                    <span class="label-text">Stock</span>
-                    </label>
-                    <input v-model="product.product_detail.stock" type="number" step="1" placeholder="Stock" class="w-full input input-bordered" />
-                </div>
-                <div class="form-control">
-                    <label class="label">
-                    <span class="label-text">Image Path</span>
-                    </label>
-                    <input v-model="product.img_path" placeholder="Image Path" class="w-full input input-bordered" />
-                </div>
-                <div class="form-control">
-                    <label class="label">
-                    <span class="label-text">Product Type</span>
-                    </label>
-                    <select v-model="product.product_type_id" class="w-full select select-bordered">
-                    <option v-for="type in productTypes" :key="type.id" :value="type.id">{{ type.name }}</option>
-                    </select>
-                </div>
-                </div>
-                <div class="justify-end card-actions">
-                <button @click="updateProduct(product)" class="btn btn-primary">Update</button>
-                <button @click="confirmDelete(product.id)" class="btn btn-error">Delete</button>
-                </div>
-            </div>
-            </div>
-        </div>
-        
-        <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
-        <Confirmation v-model:show="confirmationShow" :title="confirmationTitle" :message="confirmationMessage" @confirm="handleConfirmation" @cancel="handleCancelConfirmation" />
     </div>
+
+    <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
+    <Confirmation v-model:show="confirmationShow" :title="confirmationTitle" :message="confirmationMessage" @confirm="handleConfirmation" @cancel="handleCancelConfirmation" />
 </template>
 
 <script>
@@ -139,6 +203,8 @@ import Confirmation from './Confirmation.vue';
 export default {
     components: { Popup, Confirmation },
     setup() {
+        const imageFile = ref(null);
+
         const productTypes = ref([]);
         const newProductType = ref({
             name: ''
@@ -239,6 +305,8 @@ export default {
 
         const updateProduct = async (product) => {
             try {
+                product.img_path = imageFile.value || product.img_path;
+            
                 await axios.put(`/product/${product.id}`, product);
                 showPopup('Success', 'Product updated successfully', 'success');
             } catch (error) {
@@ -268,6 +336,53 @@ export default {
                 updateForm.value = { id: '', name: '' };
             } catch (error) {
                 showPopup('Error', error.response?.data?.message || 'Failed to update product type', 'error');
+            }
+        };
+
+        const handleImageUpload = async (event, product = null) => {
+            try {
+                const file = event.target.files[0];
+                const formData = new FormData();
+                formData.append('image', file);
+
+                if (product) {
+                    console.log("trying to update product image")
+                    const response = await axios.post('/product/upload-image', formData, {
+                        headers: {
+                        'Content-Type': 'multipart/form-data'
+                        }
+                    });
+
+                    const jsonResponse = response.data.match(/{.*}/s);
+                    if (jsonResponse) {
+                        const parsedResponse = JSON.parse(jsonResponse[0]);
+                        console.log(parsedResponse)
+                        imageFile.value = parsedResponse.image_path;
+                        console.log(imageFile)
+                    } else {
+                        showPopup('Error', 'Failed to upload image', 'error');
+                    }
+                } else {
+                    const file = event.target.files[0];
+                    const formData = new FormData();
+                    formData.append('image', file);
+
+                    const response = await axios.post('/product/upload-image', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+
+                    const jsonResponse = response.data.match(/{.*}/s);
+                    if (jsonResponse) {
+                        const parsedResponse = JSON.parse(jsonResponse[0]);
+                        newProduct.value.img_path = parsedResponse.image_path;
+                    } else {
+                        showPopup('Error', 'Failed to upload image', 'error');
+                    }
+                }
+            } catch (error) {
+                showPopup('Error', error.response?.data?.message || 'Failed to upload image', 'error');
             }
         };
 
@@ -346,6 +461,7 @@ export default {
             createProductType,
             updateProduct,
             confirmDelete,
+            handleImageUpload,
             handleConfirmation,
             handleCancelConfirmation,
             handleProductTypeSelect,
@@ -355,7 +471,8 @@ export default {
     },
     data() {
         return {
-            activeTab: 'create'
+            activeTabProductType: 'create',
+            activeTab: 'createProduct'
         };
     }
 };

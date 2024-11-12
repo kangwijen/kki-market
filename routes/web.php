@@ -24,6 +24,8 @@ Route::prefix('/api')->middleware('auth:sanctum')->group(function () {
         Route::put('/product/{product}', [ProductController::class, 'update']);
         Route::delete('/product/{product}', [ProductController::class, 'destroy']);
 
+        Route::post('/product/upload-image', [ProductController::class, 'uploadImage']);
+
         Route::post('/product-types', [ProductTypeController::class, 'store']);
         Route::put('/product-types/{productType}', [ProductTypeController::class, 'update']);
         Route::delete('/product-types/{productType}', [ProductTypeController::class, 'destroy']);
