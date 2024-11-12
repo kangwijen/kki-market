@@ -7,6 +7,8 @@ use App\Models\ProductDetail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -90,5 +92,19 @@ class ProductController extends Controller
     {
         $product->delete();
         return response()->json(['message' => 'Product deleted successfully.']);
+    }
+
+    /**
+     * Upload an image for a product.
+     */
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|max:2048',
+        ]);
+
+        $imagePath = $request->file('image')->store('.', 'public');
+
+        return response()->json(['image_path' => $imagePath]);
     }
 }
