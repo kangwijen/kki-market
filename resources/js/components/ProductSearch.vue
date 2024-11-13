@@ -133,7 +133,7 @@ export default {
                     quantity: 1
                 }, { withCredentials: true });
                 showPopup('Success', 'Product added to cart successfully!', 'success')
-                updateCartCount()
+                window.dispatchEvent(new Event('cart-updated'));
             } catch (error) {
                 if (error.response && error.response.status === 400) {
                     showPopup('Info', error.response.data.message, 'info')
@@ -144,20 +144,6 @@ export default {
                 }
             }
         }
-
-        const updateCartCount = async () => {
-            try {
-                const response = await axios.get('/cart', { withCredentials: true });
-                if (Array.isArray(response.data)) {
-                    const cartCount = response.data.reduce((total, item) => total + item.quantity, 0);
-                    document.getElementById('cart-count').textContent = cartCount;
-                } else {
-                    console.error('Expected an array from the cart API:', response.data);
-                }
-            } catch (error) {
-                console.error('Error updating cart count:', error);
-            }
-        };
 
         const searchProducts = () => {
             currentPage.value = 1
@@ -173,7 +159,6 @@ export default {
 
         onMounted(() => {
             fetchProducts()
-            updateCartCount()
         })
 
         return {

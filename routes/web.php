@@ -8,12 +8,14 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\UserDetailController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [RegisterController::class, 'register']);
 
 Route::prefix('/api')->middleware('auth:sanctum')->group(function () {
-    Route::get('/user', [AuthController::class, 'user']);
+    Route::get('/user-details', [AuthController::class, 'user']);
+    Route::put('/user-details', [UserDetailController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/products', [ProductController::class, 'index']);
@@ -61,6 +63,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/cart', function () {
         return view('layouts.app');
     })->name('cart');
+    Route::get('/user', function () {
+        return view('layouts.app');
+    })->name('user');
     Route::middleware('admin')->group(function () {
         Route::get('/admin', function () {
             return view('layouts.app');

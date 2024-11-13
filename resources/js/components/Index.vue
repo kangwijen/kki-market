@@ -2,7 +2,7 @@
     <div class="min-h-screen hero bg-base-300">
       <div class="flex flex-col items-center justify-center text-center hero-content sm:flex-row">
         <div class="max-w-md px-4">
-            <h1 class="text-4xl font-extrabold text-transparent sm:text-5xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 bg-clip-text">
+            <h1 class="text-4xl font-extrabold">
                 <span id="typewriter"></span>Malwares.
                 <span class="block">Get Money.</span>
             </h1>
@@ -33,25 +33,13 @@ export default {
             if (isAuthenticated.value) return;
             
             try {
-                const response = await axios.get('/user')
+                const response = await axios.get('/user-details')
                 isAuthenticated.value = response.data.authenticated
             } catch (error) {
                 console.error('Error checking authentication:', error)
                 isAuthenticated.value = false
             }
         };
-
-        const updateCartCount = async () => {
-            if (!isAuthenticated.value) return;
-            
-            try {
-                const response = await axios.get('/cart')
-                const cartCount = response.data.reduce((total, item) => total + item.quantity, 0)
-                document.getElementById('cart-count').textContent = cartCount
-            } catch (error) {
-                console.error('Error updating cart count:', error)
-            }
-        }
 
         onMounted(() => {
             const options = {
@@ -64,13 +52,6 @@ export default {
             new Typed('#typewriter', options);
 
             checkAuth();
-            updateCartCount();
-        });
-
-        watch(isAuthenticated, (newValue) => {
-            if (newValue) {
-                updateCartCount();
-            }
         });
 
         window.addEventListener('login', () => {

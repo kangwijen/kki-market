@@ -65,7 +65,6 @@ export default {
             } catch (error) {
                 console.error('Error fetching cart:', error);
             }
-            console.log(cartItems.value)
         }
 
         const formatPrice = (price) => {
@@ -81,8 +80,8 @@ export default {
             try {
                 await axios.put(`/cart/${item.product_id}`, { quantity: newQuantity }, { withCredentials: true })
                 item.quantity = newQuantity
-                updateCartCount()
                 showPopup('Success', 'Quantity updated successfully', 'success')
+                window.dispatchEvent(new Event('cart-updated'));
             } catch (error) {
                 if (error.response && error.response.status === 400) {
                 showPopup('Error', error.response.data.message, 'error')
@@ -97,27 +96,13 @@ export default {
             try {
                 await axios.delete(`/cart/${item.product_id}`, { withCredentials: true })
                 cartItems.value = cartItems.value.filter(cartItem => cartItem.product_id !== item.product_id)
-                updateCartCount()
                 showPopup('Success', 'Item removed from cart', 'success')
+                window.dispatchEvent(new Event('cart-updated'));
             } catch (error) {
                 console.error('Error removing item from cart:', error)
                 showPopup('Error', 'Failed to remove item from cart. Please try again.', 'error')
             }
         }
-
-        const updateCartCount = async () => {
-            try {
-                const response = await axios.get('/cart', { withCredentials: true });
-                if (Array.isArray(response.data)) {
-                    const cartCount = response.data.reduce((total, item) => total + item.quantity, 0);
-                    document.getElementById('cart-count').textContent = cartCount;
-                } else {
-                    console.error('Expected an array from the cart API:', response.data);
-                }
-            } catch (error) {
-                console.error('Error updating cart count:', error);
-            }
-        };
 
         const cartTotal = computed(() => {
             return cartItems.value.reduce((total, item) => {
@@ -130,8 +115,7 @@ export default {
         }
 
         onMounted(() => {
-            fetchCart(),
-            updateCartCount()
+            fetchCart()
         })
 
         return {

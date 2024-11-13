@@ -85,51 +85,51 @@
                         <div v-for="product in products" :key="product.id" class="shadow-xl card bg-base-100">
                             <div class="card-body">
                                 <h2 class="card-title">
-                                <input v-model="product.name" placeholder="Product Name" class="w-full input input-bordered" />
+                                    <input v-model="product.name" placeholder="Product Name" class="w-full input input-bordered" />
                                 </h2>
                                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                <div class="form-control">
-                                    <label class="label">
-                                        <span class="label-text">Price</span>
-                                    </label>
-                                    <input v-model="product.product_detail.price" type="number" step="0.01" placeholder="Price" class="w-full input input-bordered" />
-                                </div>
-                                <div class="form-control">
-                                    <label class="label">
-                                        <span class="label-text">Discount</span>
-                                    </label>
-                                    <input v-model="product.product_detail.discount" type="number" step="1" placeholder="Discount" class="w-full input input-bordered" />
-                                </div>
-                                <div class="form-control">
-                                    <label class="label">
-                                        <span class="label-text">Description</span>
-                                    </label>
-                                    <input v-model="product.product_detail.description" placeholder="Description" class="w-full input input-bordered" />
-                                </div>
-                                <div class="form-control">
-                                    <label class="label">
-                                        <span class="label-text">Stock</span>
-                                    </label>
-                                    <input v-model="product.product_detail.stock" type="number" step="1" placeholder="Stock" class="w-full input input-bordered" />
-                                </div>
-                                <div class="form-control">
-                                    <label class="label">
-                                        <span class="label-text">Change Image</span>
-                                    </label>
-                                    <input type="file" @change="handleImageUpload($event, updateProduct)" class="w-full file-input file-input-bordered" />
-                                </div>
-                                <div class="form-control">
-                                    <label class="label">
-                                        <span class="label-text">Product Type</span>
-                                    </label>
-                                    <select v-model="product.product_type_id" class="w-full select select-bordered">
-                                    <option v-for="type in productTypes" :key="type.id" :value="type.id">{{ type.name }}</option>
-                                    </select>
-                                </div>
-                                </div>
-                                <div class="justify-end card-actions">
-                                <button @click="updateProduct(product)" class="btn btn-primary">Update</button>
-                                <button @click="confirmDelete(product.id)" class="btn btn-error">Delete</button>
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Price</span>
+                                        </label>
+                                        <input v-model="product.product_detail.price" type="number" step="0.01" placeholder="Price" class="w-full input input-bordered" />
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Discount</span>
+                                        </label>
+                                        <input v-model="product.product_detail.discount" type="number" step="1" placeholder="Discount" class="w-full input input-bordered" />
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Description</span>
+                                        </label>
+                                        <input v-model="product.product_detail.description" placeholder="Description" class="w-full input input-bordered" />
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Stock</span>
+                                        </label>
+                                        <input v-model="product.product_detail.stock" type="number" step="1" placeholder="Stock" class="w-full input input-bordered" />
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Change Image</span>
+                                        </label>
+                                        <input type="file" @change="handleImageUpload($event, updateProduct)" class="w-full file-input file-input-bordered" />
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Product Type</span>
+                                        </label>
+                                        <select v-model="product.product_type_id" class="w-full select select-bordered">
+                                        <option v-for="type in productTypes" :key="type.id" :value="type.id">{{ type.name }}</option>
+                                        </select>
+                                    </div>
+                                    </div>
+                                    <div class="justify-end card-actions">
+                                    <button @click="updateProduct(product)" class="btn btn-primary">Update</button>
+                                    <button @click="confirmDelete(product.id)" class="btn btn-error">Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -346,7 +346,6 @@ export default {
                 formData.append('image', file);
 
                 if (product) {
-                    console.log("trying to update product image")
                     const response = await axios.post('/product/upload-image', formData, {
                         headers: {
                         'Content-Type': 'multipart/form-data'
@@ -356,9 +355,7 @@ export default {
                     const jsonResponse = response.data.match(/{.*}/s);
                     if (jsonResponse) {
                         const parsedResponse = JSON.parse(jsonResponse[0]);
-                        console.log(parsedResponse)
                         imageFile.value = parsedResponse.image_path;
-                        console.log(imageFile)
                     } else {
                         showPopup('Error', 'Failed to upload image', 'error');
                     }

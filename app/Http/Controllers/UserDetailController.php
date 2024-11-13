@@ -3,8 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserDetail;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use App\Http\Requests\StoreUserDetailRequest;
 use App\Http\Requests\UpdateUserDetailRequest;
+use App\Models\User;
 
 class UserDetailController extends Controller
 {
@@ -53,7 +58,26 @@ class UserDetailController extends Controller
      */
     public function update(UpdateUserDetailRequest $request, UserDetail $userDetail)
     {
-        //
+        if (!Hash::check($request->currentPassword, Auth::user()->password)) {
+            throw ValidationException::withMessages([
+                'currentPassword' => ['The provided password does not match your current password.']
+            ]);
+        }
+
+        // Get validated data
+        $validated = $request->validated();
+        
+        // Remove currentPassword from validated data
+        unset($validated['currentPassword']);
+        
+        // Update user details
+        $user = User::find(Auth::id());
+        $user->update($validated);
+
+        return response()->json([
+            'message' => 'User details updated successfully',
+            'user' => $user
+        ], 200);
     }
 
     /**
