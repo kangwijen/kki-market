@@ -109,7 +109,7 @@ export default {
                     quantity: quantity.value
                 }, { withCredentials: true });
                 showPopup('Success', 'Product added to cart successfully!', 'success')
-                updateCartCount()
+                window.dispatchEvent(new Event('cart-updated'));
             } catch (error) {
                 if (error.response && error.response.status === 400) {
                     showPopup('Info', error.response.data.message, 'info')
@@ -126,19 +126,8 @@ export default {
             router.push('/cart')
         }
 
-        const updateCartCount = async () => {
-            try {
-                const response = await axios.get('/cart')
-                const cartCount = response.data.reduce((total, item) => total + item.quantity, 0)
-                document.getElementById('cart-count').textContent = cartCount
-            } catch (error) {
-                console.error('Error updating cart count:', error)
-            }
-        }
-
         onMounted(() => {
             fetchProduct();
-            updateCartCount();
         })
 
         return {

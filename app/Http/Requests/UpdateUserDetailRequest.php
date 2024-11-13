@@ -11,7 +11,7 @@ class UpdateUserDetailRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->id === $this->request->get('id');
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdateUserDetailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'username' => ['sometimes', 'string', 'max:255'],
+            'email' => ['sometimes', 'string', 'email', 'max:255'],
+            'new_password' => ['sometimes', 'string', 'min:8'],
+            'currentPassword' => ['required', 'string'],
         ];
     }
 }

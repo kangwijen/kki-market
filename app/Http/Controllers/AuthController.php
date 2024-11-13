@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {
@@ -35,13 +33,12 @@ class AuthController extends Controller
             'authenticated' => true,
             'user' => [
                 'id' => $user->id,
-                'email' => $user->email,
+                'isAdmin' => $user->role_id === 1,
                 'username' => $user->username,
-                'isAdmin' => $user->role_id === 1
+                'email' => $user->email,
             ]
         ]);
     }
-
     public function logout(Request $request)
     {
         auth()->guard('web')->logout();
