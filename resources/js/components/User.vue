@@ -69,6 +69,34 @@
                     </div>
                 </div>
             </div>
+
+            <div v-if="activeTab === 'passwordChange'">
+                <div class="mb-8 card bg-base-200">
+                    <div class="card-body">
+                        <h2 class="mb-4 text-2xl card-title">Change Password</h2>
+                        
+                        <div class="space-y-4">
+                            <div class="shadow-xl card bg-base-100">
+                                <div class="card-body">
+                                    <h3 class="card-title">Username</h3>
+                                    <input v-model="user.username" placeholder="Username" class="w-full input input-bordered" />
+                                </div>
+                            </div>
+                            <div class="shadow-xl card bg-base-100">
+                                <div class="card-body">
+                                    <h3 class="card-title">Current password</h3>
+                                    <input v-model="user.currentPassword" placeholder="Confirm Password" class="w-full mt-4 input input-bordered" />
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="card-title">New password</h3>
+                                    <input v-model="user.newPassword" placeholder="Enter New Password" class="w-full mt-4 input input-bordered" />
+                                </div>
+                            </div>
+                            <button @click="updatePassword(user)" class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -92,7 +120,8 @@ export default {
         const user = ref({
             username: '',
             email: '',
-            currentPassword: ''
+            currentPassword: '',
+            newPassword: ''
         });
 
         const showPopup = (title, message, type = 'info') => {
@@ -139,6 +168,20 @@ export default {
             }
         };
 
+        const updatePassword = async (userData) => {
+            try {
+                if (!validatePasswords()) return;
+
+                const updateData = { ...userData };
+
+                await axios.put('/user-details', updateData);
+                showPopup('Success', 'Password updated successfully', 'success');
+                clearPasswords();
+            } catch (error) {
+                showPopup('Error', error.response?.data?.message || 'Failed to change password', 'error');
+            }
+        };
+
         onMounted(() => {
             fetchUserDetails();
         });
@@ -151,7 +194,8 @@ export default {
             user,
             showPopup,
             fetchUserDetails,
-            updateUser
+            updateUser,
+            updatePassword
         };
     },
     data() {
