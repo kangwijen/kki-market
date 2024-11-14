@@ -222,7 +222,7 @@ export default {
                 };
                 // showPopup('error', 'keren');
 
-                const response = await axios.put('/user-details', updateData);
+                await axios.put('/user-details', updateData);
                 showPopup('Success', 'Password updated successfully', 'success');
             } catch (error) {
                 showPopup('Error', error.response?.data?.message || 'Failed to change password', 'error');
