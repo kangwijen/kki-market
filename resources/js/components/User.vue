@@ -49,7 +49,7 @@
                             <div class="shadow-xl card bg-base-100">
                                 <div class="card-body">
                                     <h3 class="card-title">Password</h3>
-                                    <input v-model="user.currentPassword" placeholder="Confirm Password" class="w-full mt-4 input input-bordered" />
+                                    <input type="password" v-model="user.currentPassword" placeholder="Confirm Password" class="w-full mt-4 input input-bordered" />
                                 </div>
                             </div>
                             <button @click="updateUser(user)" class="btn btn-primary">Update</button>
@@ -85,12 +85,20 @@
                             <div class="shadow-xl card bg-base-100">
                                 <div class="card-body">
                                     <h3 class="card-title">Current password</h3>
-                                    <input v-model="user.currentPassword" placeholder="Confirm Password" class="w-full mt-4 input input-bordered" />
+                                    <input type="password" v-model="user.currentPassword" placeholder="Confirm Password" class="w-full mt-4 input input-bordered" />
                                 </div>
-                                <div class="card-body">
-                                    <h3 class="card-title">New password</h3>
-                                    <input v-model="user.newPassword" placeholder="Enter New Password" class="w-full mt-4 input input-bordered" />
+                                <div class="shadow-xl card bg-base-100">
+                                    <div class="card-body">
+                                        <h3 class="card-title">New password</h3>
+                                        <input type="password" v-model="user.newPassword" placeholder="Enter New Password" class="w-full mt-4 input input-bordered" />
+                                    </div>
                                 </div>
+                                    <div class="shadow-xl card bg-base-100">
+                                        <div class="card-body">
+                                            <h3 class="card-title">Confirm new password</h3>
+                                            <input type="password" v-model="user.newPassword_confirmation" placeholder="Confirm New Password" class="w-full mt-4 input input-bordered" />
+                                        </div>
+                                    </div>
                             </div>
                             <button @click="updatePassword(user)" class="btn btn-primary">Update</button>
                         </div>
@@ -170,13 +178,52 @@ export default {
 
         const updatePassword = async (userData) => {
             try {
-                if (!validatePasswords()) return;
+                // if (!validatePasswords()) return;
+                // if (!this.user.newPassword) {
+                //     this.showPopup('Error', 'New password is required', 'error');
+                //     return false;
+                // }
+                // if (this.user.newPassword.length < 8) {
+                //     this.showPopup('Error', 'New password must be at least 8 characters', 'error');
+                //     return false;
+                // }
+                // if (this.user.newPassword !== this.user.newPassword_confirmation) {
+                //     this.showPopup('Error', 'New password is required', 'error');
+                //     return false;
+                // }
+                // if (this.user.currentPassword === this.user.newPassword) {
+                //     this.showPopup('Error', 'New password must be different from current password', 'error');
+                //     return false;
+                // }
+                if (!userData.newPassword) {
+                    showPopup('Error', 'New password is required', 'error');
+                    return false;
+                }
+                
+                if (userData.newPassword.length < 8) {
+                    showPopup('Error', 'New password must be at least 8 characters', 'error');
+                    return false;
+                }
+                
+                if (userData.newPassword !== userData.newPassword_confirmation) {
+                    showPopup('Error', 'Password confirmation does not match', 'error');
+                    return false;
+                }
+                
+                if (userData.currentPassword === userData.newPassword) {
+                    showPopup('Error', 'New password must be different from current password', 'error');
+                    return false;
+                }
+                const updateData = { 
+                    username: userData.username,
+                    currentPassword: userData.currentPassword,
+                    newPassword: userData.newPassword,
+                    newPassword_confirmation: userData.newPassword_confirmation
+                };
+                // showPopup('error', 'keren');
 
-                const updateData = { ...userData };
-
-                await axios.put('/user-details', updateData);
+                const response = await axios.put('/user-details', updateData);
                 showPopup('Success', 'Password updated successfully', 'success');
-                clearPasswords();
             } catch (error) {
                 showPopup('Error', error.response?.data?.message || 'Failed to change password', 'error');
             }

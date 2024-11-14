@@ -3,15 +3,17 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateUserPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
+    public function authorize()
     {
-        return $this->user()->id === $this->request->get('id');
+        // return Auth::check();
+        return true;
     }
 
     /**
@@ -25,6 +27,7 @@ class UpdateUserPasswordRequest extends FormRequest
             'username' => ['sometimes', 'string', 'max:255'],
             'currentPassword' => ['required', 'string'],
             'newPassword' => ['required', 'sometimes', 'string', 'min:8'],
+            'newPassword_confirmation' => ['required', 'sometimes', 'string', 'min:8']
         ];
     }
 }

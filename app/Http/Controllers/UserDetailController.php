@@ -113,6 +113,7 @@ class UserDetailController extends Controller
         // Get validated data
         $validated = $request->validated();
         
+        
         // Remove currentPassword from validated data
         unset($validated['currentPassword']);
         

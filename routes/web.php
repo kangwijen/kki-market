@@ -66,6 +66,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/user', function () {
         return view('layouts.app');
     })->name('user');
+    Route::get('/user-details', function () {
+        return view('layouts.app');
+    })->name('user-details');
+    
     Route::middleware('admin')->group(function () {
         Route::get('/admin', function () {
             return view('layouts.app');
