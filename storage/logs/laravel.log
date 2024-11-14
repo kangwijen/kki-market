@@ -641,3 +641,31 @@
 #56 D:\\kki-market\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('D:\\\\kki-market\\\\p...')
 #57 {main}
 "} 
+[2024-11-14 18:14:00] local.ERROR: Cannot use try without catch or finally {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use try without catch or finally at D:\\kuliah\\sem 5\\secprog\\kki-market\\app\\Http\\Controllers\\UserDetailController.php:32)
+[stacktrace]
+#0 {main}
+"} 
+[2024-11-14 18:14:09] local.ERROR: Cannot use try without catch or finally {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use try without catch or finally at D:\\kuliah\\sem 5\\secprog\\kki-market\\app\\Http\\Controllers\\UserDetailController.php:32)
+[stacktrace]
+#0 {main}
+"} 
+[2024-11-14 18:14:13] local.ERROR: Cannot use try without catch or finally {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use try without catch or finally at D:\\kuliah\\sem 5\\secprog\\kki-market\\app\\Http\\Controllers\\UserDetailController.php:32)
+[stacktrace]
+#0 {main}
+"} 
+[2024-11-14 18:16:16] local.ERROR: Cannot use try without catch or finally {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use try without catch or finally at D:\\kuliah\\sem 5\\secprog\\kki-market\\app\\Http\\Controllers\\UserDetailController.php:32)
+[stacktrace]
+#0 {main}
+"} 
+[2024-11-14 18:16:55] local.ERROR: Cannot use try without catch or finally {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use try without catch or finally at D:\\kuliah\\sem 5\\secprog\\kki-market\\app\\Http\\Controllers\\UserDetailController.php:32)
+[stacktrace]
+#0 {main}
+"} 
+[2024-11-14 18:17:02] local.ERROR: Cannot use try without catch or finally {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use try without catch or finally at D:\\kuliah\\sem 5\\secprog\\kki-market\\app\\Http\\Controllers\\UserDetailController.php:32)
+[stacktrace]
+#0 {main}
+"} 
+[2024-11-14 18:17:35] local.ERROR: Cannot use try without catch or finally {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use try without catch or finally at D:\\kuliah\\sem 5\\secprog\\kki-market\\app\\Http\\Controllers\\UserDetailController.php:32)
+[stacktrace]
+#0 {main}
+"} 
