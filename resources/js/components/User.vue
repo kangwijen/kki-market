@@ -17,6 +17,13 @@
                 >
                     Purchase History
                 </a>
+                <a
+                    class="justify-start btn"
+                    :class="{ 'bg-base-300': activeTab === 'passwordChange' }"
+                    @click="activeTab = 'passwordChange'"
+                >
+                    Change Password
+                </a>
             </div>
         </div>
 
