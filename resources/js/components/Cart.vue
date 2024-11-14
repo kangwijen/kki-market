@@ -30,7 +30,7 @@
             <div class="mb-4 text-xl">
                 Total: ${{ formatPrice(cartTotal) }}
             </div>
-            <button class="w-full btn btn-primary" @click="checkout">Proceed to Checkout</button>
+            <button class="w-full btn btn-primary" @click="checkout(cartTotal)">Proceed to Checkout</button>
             </div>
         </div>
         <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
@@ -110,8 +110,17 @@ export default {
             }, 0)
         })
         
-        const checkout = () => {
-            alert('Checkout functionality not implemented yet.')
+        const checkout = async() => {
+            // alert('Checkout functionality not implemented yet.')
+            try {
+                const response = await axios.post('/cart/checkout');
+                showPopup('Success', response.data.message, 'success');
+                cartItems.value = [];
+                window.dispatchEvent(new Event('cart-updated'));
+            } catch (error) {
+                console.error('Error during checkout:', error);
+                showPopup('Error', error.response?.data?.message || 'Checkout failed. Please try again.', 'error');
+            }
         }
 
         onMounted(() => {

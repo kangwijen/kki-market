@@ -9,20 +9,15 @@ class TransactionHeader extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['transaction_date'];
+    protected $fillable = ['user_id', 'transaction_date'];
 
-    public function buyer()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'buyer_id');
+        return $this->belongsTo(User::class);
     }
 
-    public function seller()
+    public function transactionDetails()
     {
-        return $this->belongsTo(User::class, 'seller_id');
-    }
-
-    public function transactionDetail()
-    {
-        return $this->hasOne(TransactionDetail::class);
+        return $this->hasMany(TransactionDetail::class);
     }
 }
