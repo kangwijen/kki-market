@@ -42,7 +42,7 @@
                             <div class="shadow-xl card bg-base-100">
                                 <div class="card-body">
                                     <h3 class="card-title">Password</h3>
-                                    <input v-model="user.currentPassword" placeholder="Confirm Password" class="w-full mt-4 input input-bordered" />
+                                    <input type="password" v-model="user.currentPassword" placeholder="Confirm Password" class="w-full mt-4 input input-bordered" />
                                 </div>
                             </div>
                             <button @click="updateUser(user)" class="btn btn-primary">Update</button>

@@ -81,6 +81,30 @@ class UserDetailController extends Controller
     }
 
     /**
+     * Change user password
+     */
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['The provided password does not match your current password.']
+            ]);
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return response()->json(['message' => 'Password changed successfully'], 200);
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(UserDetail $userDetail)
