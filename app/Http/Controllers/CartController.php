@@ -134,10 +134,16 @@ class CartController extends Controller
     public function checkout()
     {
         try{
+            DB::beginTransaction();
+
             $userId = Auth::id();
             $cartItems = Cart::with('product.productDetail')
                 ->where('user_id', $userId)
                 ->get();
+
+            if ($cartItems->isEmpty()) {
+                return response()->json(['message' => 'Cart is empty'], 400);
+            }
             
             $cartTotal = 0;
     
@@ -151,55 +157,54 @@ class CartController extends Controller
                 if ($cartItem->quantity > $product->productDetail->stock) {
                     return response()->json(['message' => 'Requested quantity exceeds available stock'], 400);
                 }
+
+                if ($cartItem->quantity < 1) {
+                    return response()->json(['message' => 'Invalid quantity'], 400);
+                }
     
                 $cartTotal += $product->productDetail->price * $cartItem->quantity;
             }
-                
-            if ($cartTotal === 0) {
-                return response()->json(['message' => 'Cart is empty'], 400);
-            }
-    
+
             $userDetail = UserDetail::where('user_id', $userId)->first();
     
             if ($userDetail->balance < $cartTotal) {
                 return response()->json(['message' => 'Insufficient balance'], 400);
             }
     
-            DB::beginTransaction();
-    
-            try {
-                foreach ($cartItems as $cartItem) {
-                    $product = Product::with('productDetail')->findOrFail($cartItem->product_id);
-                    $product->productDetail->decrement('stock', $cartItem->quantity);
-                    $product->productDetail->increment('sold', $cartItem->quantity);
-                }
-                
-                UserDetail::where('user_id', $userId)
-                    ->decrement('balance', $cartTotal);
-    
-                $transaction = TransactionHeader::create([
-                    'user_id' => Auth::id()
-                ]);
-    
-                foreach ($cartItems as $cartItem) {
-                    $transaction->transactionDetails()->create([
-                        'product_id' => $cartItem->product_id,
-                        'quantity' => $cartItem->quantity,
-                        'price' => $cartItem->product->productDetail->price,
-                        'total_price' => $cartItem->quantity * $cartItem->product->productDetail->price,
-                    ]);
-                }
-                    
-                Cart::where('user_id', $userId)->delete();
-    
-                DB::commit();
-    
-                return response()->json(null, 204);
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return response()->json(['message' => $e->getMessage()], 500);
+            foreach ($cartItems as $cartItem) {
+                $product = Product::with('productDetail')->findOrFail($cartItem->product_id);
+                $product->productDetail->decrement('stock',$cartItem->quantity);
+                $product->productDetail->increment('sold',$cartItem->quantity);
             }
+                
+            UserDetail::where('user_id', $userId)
+                ->decrement('balance', $cartTotal);
+
+            $transaction = TransactionHeader::create([
+                'user_id' => Auth::id()
+            ]);
+
+            foreach ($cartItems as $cartItem) {
+                $transaction->transactionDetails()->create([
+                    'product_id' => $cartItem->product_id,
+                    'quantity' => $cartItem->quantity,
+                    'price' => $cartItem->product->productDetail->price,
+                    'total_price' => $cartItem->quantity *$cartItem->product->productDetail->price,
+                ]);
+            }
+                
+            Cart::where('user_id', $userId)->delete();
+
+            DB::commit();
+            
+            $transaction->load('transactionDetails.product.productDetail');
+
+            return response()->json([
+                'message' => 'Checkout successful',
+                'transaction' => $transaction,
+            ], 200);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
