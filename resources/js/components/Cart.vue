@@ -1,6 +1,9 @@
 <template>
     <div class="min-h-screen p-8 bg-base-300">
-        <h1 class="mb-8 text-3xl font-bold">Your Cart</h1>
+        <div class="mb-4 flex items-center">
+                <a @click="$router.back()" class="btn btn-secondary rounded-full items-center justify-center">⮜</a>
+                <h1 class="ml-5 text-3xl font-bold">Your Cart</h1>
+        </div>
         <div v-if="cartItems.length === 0" class="text-xl">
             Your cart is empty.
         </div>
