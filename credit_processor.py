@@ -11,7 +11,7 @@ def charge():
     
     time.sleep(1)
     
-    success = random.choice([True, False])
+    success = random.choice([True, False]) # placeholder for actual payment processing
     
     if success:
         return jsonify({
@@ -21,7 +21,7 @@ def charge():
     else:
         return jsonify({
             'status': 'error',
-            'message': 'Payment could not be processed',
+            'message': 'Payment could not be processed, please try again.',
         }), 400
 
 if __name__ == '__main__':

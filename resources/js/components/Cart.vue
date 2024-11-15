@@ -4,9 +4,44 @@
                 <a @click="$router.back()" class="btn btn-secondary rounded-full items-center justify-center">⮜</a>
                 <h1 class="ml-5 text-3xl font-bold">Your Cart</h1>
         </div>
-        <div v-if="cartItems.length === 0" class="text-xl">
-            Your cart is empty.
+
+        <div v-if="cartItems.length === 0" class="grid gap-8 md:grid-cols-3">
+                <div class="mt-4 md:col-span-2">Your cart is empty. Add items to your cart to see them displayed here. </div>
+                <div class="p-6 space-y-6 shadow-xl card bg-base-100">
+                <div>
+                    <h2 class="mb-4 text-2xl font-semibold">Order Summary</h2>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span>Subtotal:</span>
+                            <span>${{ formatPrice(cartTotal) }}</span>
+                        </div>
+                        <div class="flex justify-between font-bold">
+                            <span>Total:</span>
+                            <span>${{ formatPrice(cartTotal) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t">
+                    <div class="flex justify-between mb-2">
+                        <span class="font-semibold">Your Balance:</span>
+                        <span class="font-semibold" :class="{'text-error': insufficientFunds}">${{ formatPrice(userBalance) }}</span>
+                    </div>
+                    <div v-if="insufficientFunds" class="mb-4 text-sm text-error">
+                        Insufficient balance. Please <router-link to="/profile" class="text-primary">top up</router-link> your account.
+                    </div>
+                </div>
+
+                <button 
+                    class="w-full btn btn-primary" 
+                    @click="initiateCheckout"
+                    :disabled="isProcessing || cartItems.length === 0 || insufficientFunds"
+                >
+                    {{ isProcessing ? 'Processing...' : 'Purchase Now' }}
+                </button>
+            </div>
         </div>
+
         <div v-else class="grid gap-8 md:grid-cols-3">
             <div class="md:col-span-2">
                 <div v-for="item in cartItems" :key="item.id" class="mb-4 shadow-xl card bg-base-100">
