@@ -48,7 +48,7 @@
 </template>
     
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRoute, useRouter } from 'vue-router'
 import Popup from './Popup.vue'

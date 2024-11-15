@@ -1,7 +1,8 @@
 <template>
     <nav class="navbar bg-base-100">
         <div class="flex-1">
-            <router-link to="/" class="text-xl normal-case btn btn-ghost">KKI-Market</router-link>
+            <router-link v-if="isAuthenticated" to="/search" class="m-4 text-xl font-bold">KKI-Market</router-link>
+            <router-link v-else to="/" class="m-4 text-xl font-bold">KKI-Market</router-link>
         </div>
 
         <div class="flex-none lg:hidden">
@@ -21,13 +22,11 @@
                 Cart
                 <span class="ml-1 badge badge-secondary" id="cart-count">{{ cartCount }}</span>
             </router-link>
-            <button class="btn btn-secondary" @click="logout">Logout</button>
             <div v-if="isAdmin">
-                <button class="btn btn-secondary" @click="admin">Admin</button>
+                <button class="btn btn-secondary" @click="admin">Dashboard</button>
             </div>
-            <div>
-                <button class="btn btn-secondary" @click="user">User</button>
-            </div>
+            <button class="btn btn-secondary" @click="user">Profile</button>
+            <button class="btn btn-secondary" @click="logout">Logout</button>
         </div>
 
         <div v-if="isMenuOpen" class="absolute right-0 z-50 w-full p-4 space-y-2 rounded-lg shadow-lg top-16 bg-base-100 lg:hidden">
@@ -42,11 +41,11 @@
                 </router-link>
                 
                 <button v-if="isAdmin" @click="admin" class="w-full px-4 py-2 text-left text-green-400 rounded-md">
-                    Admin
+                    Dashboard
                 </button>
                 
                 <button @click="user" class="w-full px-4 py-2 text-left text-green-400 rounded-md">
-                    User
+                    Profile
                 </button>
 
                 <button @click="logout" class="w-full px-4 py-2 text-left text-red-400 rounded-md">
@@ -113,8 +112,8 @@ export default {
 
         const user = async () => {
             try {
-                await axios.get('/user');
-                router.push('/user');
+                await axios.get('/profile');
+                router.push('/profile');
             } catch (error) {
                 console.error('Error accessing user:', error);
             }

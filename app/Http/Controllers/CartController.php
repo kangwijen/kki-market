@@ -6,7 +6,6 @@ use App\Models\Cart;
 use App\Models\Product;
 use App\Models\UserDetail;
 use App\Models\TransactionHeader;
-use App\Models\TransactionDetail;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -40,36 +39,41 @@ class CartController extends Controller
      */
     public function store(StoreCartRequest $request)
     {   
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
+        try {
+            DB::beginTransaction();
+            
+            $existingCartItem = Cart::where('user_id', Auth::id())
+                ->where('product_id', $request->product_id)
+                ->first();
 
-        $existingCartItem = Cart::where('user_id', Auth::id())
-            ->where('product_id', $request->product_id)
-            ->first();
+            if ($existingCartItem) {
+                return response()->json(['message' => 'Product already added to cart'], 400);
+            }
 
-        if ($existingCartItem) {
-            return response()->json(['message' => 'Product already added to cart'], 400);
+            $product = Product::with('productDetail')->findOrFail($request->product_id);
+            
+            if (!$product->productDetail || $product->productDetail->stock === null) {
+                return response()->json(['message' => 'Product stock information is unavailable'], 400);
+            }
+
+            if ($request->quantity > $product->productDetail->stock) {
+                return response()->json(['message' => 'Requested quantity exceeds available stock'], 400);
+            }
+
+            $cart = Cart::create([
+                'user_id' => Auth::id(),
+                'product_id' => $request->product_id,
+                'quantity' => $request->quantity,
+            ]);
+
+            DB::commit();
+
+            return response()->json($cart, 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 400);
         }
-
-        $product = Product::with('productDetail')->findOrFail($request->product_id);
-        
-        if (!$product->productDetail || $product->productDetail->stock === null) {
-            return response()->json(['message' => 'Product stock information is unavailable'], 400);
-        }
-
-        if ($request->quantity > $product->productDetail->stock) {
-            return response()->json(['message' => 'Requested quantity exceeds available stock'], 400);
-        }
-
-        $cart = Cart::create([
-            'user_id' => Auth::id(),
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity,
-        ]);
-
-        return response()->json($cart, 201);
     }
 
     /**
@@ -93,27 +97,35 @@ class CartController extends Controller
      */
     public function update(UpdateCartRequest $request, $product_id)
     {
-        $cart = Cart::where('user_id', Auth::id())
-            ->where('product_id', $product_id)
-            ->firstOrFail();
-
-        $product = Product::with('productDetail')->findOrFail($product_id);
-        
-        if (!$product->productDetail || $product->productDetail->stock === null) {
-            return response()->json(['message' => 'Product stock information is unavailable'], 400);
+        try {
+            DB::beginTransaction();
+    
+            $cart = Cart::where('user_id', Auth::id())
+                ->where('product_id', $product_id)
+                ->firstOrFail();
+    
+            $product = Product::with('productDetail')->findOrFail($product_id);
+            
+            if (!$product->productDetail || $product->productDetail->stock === null) {
+                throw new \Exception('Product stock information is unavailable');
+            }
+    
+            if ($request->quantity > $product->productDetail->stock) {
+                throw new \Exception('Requested quantity exceeds available stock');
+            }
+    
+            $cart = Cart::where('user_id', Auth::id())
+                ->where('product_id', $product_id)
+                ->update([
+                    'quantity' => $request->quantity,
+                ]);
+    
+            DB::commit();
+            return response()->json($cart, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 400);
         }
-
-        if ($request->quantity > $product->productDetail->stock) {
-            return response()->json(['message' => 'Requested quantity exceeds available stock'], 400);
-        }
-
-        $cart = Cart::where('user_id', Auth::id())
-            ->where('product_id', $product_id)
-            ->update([
-                'quantity' => $request->quantity,
-        ]);
-
-        return response()->json($cart, 200);
     }
 
     /**

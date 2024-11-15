@@ -1,31 +1,11 @@
 <template>
     <div class="flex flex-col h-screen md:flex-row">
-        <div class="p-4 border-r md:w-64 bg-base-200">
-            <h1 class="mb-6 text-2xl font-bold text-primary">Admin Dashboard</h1>
-            <div class="space-y-4">
-                <a
-                    class="justify-start btn"
-                    :class="{ 'bg-base-300': activeTab === 'createProduct' }"
-                    @click="activeTab = 'createProduct'"
-                >
-                    Create Product
-                </a>
-                <a
-                    class="justify-start btn"
-                    :class="{ 'bg-base-300': activeTab === 'updateProduct' }"
-                    @click="activeTab = 'updateProduct'"
-                >
-                    Update Product
-                </a>
-                <a
-                    class="justify-start btn"
-                    :class="{ 'bg-base-300': activeTab === 'productTypeManagement' }"
-                    @click="activeTab = 'productTypeManagement'"
-                >
-                    Product Type Management
-                </a>
-            </div>
-        </div>
+        <Sidebar 
+            title="Admin Dashboard" 
+            :tabs="adminTabs" 
+            :activeTab="activeTab" 
+            @changeTab="handleTabChange" 
+        />
 
         <div class="flex-1 p-4">
             <div v-if="activeTab === 'createProduct'">
@@ -93,12 +73,6 @@
                                             <span class="label-text">Price</span>
                                         </label>
                                         <input v-model="product.product_detail.price" type="number" step="0.01" placeholder="Price" class="w-full input input-bordered" />
-                                    </div>
-                                    <div class="form-control">
-                                        <label class="label">
-                                            <span class="label-text">Discount</span>
-                                        </label>
-                                        <input v-model="product.product_detail.discount" type="number" step="1" placeholder="Discount" class="w-full input input-bordered" />
                                     </div>
                                     <div class="form-control">
                                         <label class="label">
@@ -187,6 +161,105 @@
                     </div>
                 </div>
             </div>
+
+            <div v-if="activeTab === 'userManagement'">
+                <div class="mb-8 card bg-base-200">
+                    <div class="card-body">
+                        <h2 class="mb-4 text-2xl card-title">User Management</h2>
+                        <div v-for="user in users" :key="user.id">
+                            <div class="shadow-xl card bg-base-100">
+                                <div class="card-body">
+                                    <!-- User Basic Info Section -->
+                                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                        <div class="space-y-4">
+                                            <h2 class="text-xl font-bold">Basic Information</h2>
+                                            <div class="form-control">
+                                                <label class="label">
+                                                    <span class="label-text">Username</span>
+                                                </label>
+                                                <input 
+                                                    v-model="user.username" 
+                                                    type="text"
+                                                    class="input input-bordered" 
+                                                    :readonly="true"
+                                                />
+                                            </div>
+                                            <div class="form-control">
+                                                <label class="label">
+                                                    <span class="label-text">Email</span>
+                                                </label>
+                                                <input 
+                                                    v-model="user.email" 
+                                                    type="email" 
+                                                    class="input input-bordered" 
+                                                    :readonly="true"
+                                                />
+                                            </div>
+                                            <div class="form-control">
+                                                <label class="label">
+                                                    <span class="label-text">Role</span>
+                                                </label>
+                                                <span>{{ user.role_name }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="space-y-4">
+                                            <h2 class="text-xl font-bold">User Details</h2>
+                                            <div class="form-control">
+                                                <label class="label">
+                                                    <span class="label-text">Balance</span>
+                                                </label>
+                                                <input 
+                                                    v-model="user.user_detail.balance" 
+                                                    type="number" 
+                                                    step="0.01" 
+                                                    class="input input-bordered" 
+                                                />
+                                            </div>
+                                            <div class="form-control">
+                                                <label class="label">
+                                                    <span class="label-text">Verification Status</span>
+                                                </label>
+                                                <div class="flex items-center space-x-2">
+                                                    <input 
+                                                        v-model="user.user_detail.verified" 
+                                                        type="checkbox" 
+                                                        class="toggle toggle-primary" 
+                                                        :true-value="1" 
+                                                        :false-value="0"
+                                                    />
+                                                    <span>{{ user.user_detail.verified ? 'Verified' : 'Not Verified' }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-4 space-y-2">
+                                            <div class="text-sm text-gray-500">
+                                                <span class="font-semibold">Created:</span> 
+                                                {{ new Date(user.created_at).toLocaleString() }}
+                                            </div>
+                                            <div class="text-sm text-gray-500">
+                                                <span class="font-semibold">Last Updated:</span> 
+                                                {{ new Date(user.updated_at).toLocaleString() }}
+                                            </div>
+                                            <div class="text-sm text-gray-500">
+                                                <span class="font-semibold">Email Verified: </span> 
+                                                <span :class="user.email_verified_at ? 'text-green-500' : 'text-red-500'">
+                                                    {{ user.email_verified_at ? new Date(user.email_verified_at).toLocaleString() : 'Not verified' }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-end gap-2 mt-4 card-actions">
+                                            <button @click="updateUser(user)" class="btn btn-primary">Update</button>
+                                            <button @click="handleDeleteUser(user.id)" class="btn btn-error">Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -199,9 +272,10 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import Popup from './Popup.vue';
 import Confirmation from './Confirmation.vue';
+import Sidebar from './Sidebar.vue';
 
 export default {
-    components: { Popup, Confirmation },
+    components: { Popup, Confirmation, Sidebar },
     setup() {
         const imageFile = ref(null);
 
@@ -225,8 +299,7 @@ export default {
             product_detail: {
                 price: '',
                 description: '',
-                stock: '',
-                discount: 0
+                stock: ''
             },
             img_path: '',
             product_type_id: ''
@@ -245,6 +318,8 @@ export default {
             type: null,
             id: null
         });
+
+        const users = ref([]);
 
         const showPopup = (title, message, type = 'info') => {
             popupTitle.value = title;
@@ -271,6 +346,18 @@ export default {
             }
         };
 
+        const fetchUserDetails = async () => {
+            try {
+                const response = await axios.get('/user-details/all');
+                users.value = response.data.userDetails;
+                users.value.forEach(user => {
+                    user.role_name = user.role_id === 1 ? 'Admin' : 'User';
+                });
+            } catch (error) {
+                showPopup('Error', error.response?.data?.message || 'Failed to fetch user details', 'error');
+            }
+        };
+
         const createProduct = async () => {
             try {
                 const response = await axios.post('/product', newProduct.value);
@@ -281,8 +368,7 @@ export default {
                     product_detail: {
                         price: '',
                         description: '',
-                        stock: '',
-                        discount: 0
+                        stock: ''
                     },
                     img_path: '',
                     product_type_id: ''
@@ -382,6 +468,14 @@ export default {
                 showPopup('Error', error.response?.data?.message || 'Failed to upload image', 'error');
             }
         };
+        
+        const updateUser = (user) => {
+            showPopup('Update User', 'This feature is not yet implemented', 'info');
+        };
+
+        const handleDeleteUser = (user) => {
+            showPopup('Delete User', 'This feature is not yet implemented', 'info');
+        };
 
         const confirmDelete = (id) => {
             deleteState.value = {
@@ -402,6 +496,7 @@ export default {
             confirmationMessage.value = 'Are you sure you want to delete this product type? This action cannot be undone.';
             confirmationShow.value = true;
         };
+
 
         const handleConfirmation = async () => {
             if (!deleteState.value.id) return;
@@ -435,6 +530,7 @@ export default {
         };
 
         onMounted(() => {
+            fetchUserDetails();
             fetchProductTypes();
             fetchProducts();
         });
@@ -453,7 +549,10 @@ export default {
             confirmationMessage,
             updateForm,
             deleteForm,
-            
+            users,
+            updateUser,
+            handleDeleteUser,
+            fetchUserDetails,
             createProduct,
             createProductType,
             updateProduct,
@@ -469,8 +568,20 @@ export default {
     data() {
         return {
             activeTabProductType: 'create',
-            activeTab: 'createProduct'
+            activeTab: 'createProduct',
+            activeTabUserManagement: 'update',
+            adminTabs: [
+                { name: 'createProduct', label: 'Create Product' },
+                { name: 'updateProduct', label: 'Update Product' },
+                { name: 'productTypeManagement', label: 'Product Type Management' },
+                { name: 'userManagement', label: 'User Management' }
+            ]
         };
+    },
+    methods: {
+        handleTabChange(tab) {
+            this.activeTab = tab;
+        }
     }
 };
 </script>

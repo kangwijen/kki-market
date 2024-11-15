@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TransactionHeader;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTransactionHeaderRequest;
 use App\Http\Requests\UpdateTransactionHeaderRequest;
 
@@ -37,7 +38,10 @@ class TransactionHeaderController extends Controller
      */
     public function show(TransactionHeader $transactionHeader)
     {
-        //
+        $user = Auth::user();
+        $transactionHeaders = $transactionHeader->where('user_id', $user->id)->with('transactionDetails')->get();
+        $transactionHeaders->load('transactionDetails.product');
+        return response()->json($transactionHeaders);
     }
 
     /**
