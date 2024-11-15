@@ -16,10 +16,10 @@ use Illuminate\Support\Facades\DB;
 
 class UserDetailController extends Controller
 {
-    // public function showChangePasswordForm()
-    // {
-    //     return view('auth.change-password');
-    // }
+    public function showChangePasswordForm()
+    {
+        return view('auth.change-password');
+    }
 
     public function updatePassword(UpdateUserPasswordRequest $request)
     {
@@ -31,11 +31,6 @@ class UserDetailController extends Controller
             // Get the authenticated user
             $user = Auth::user()->userDetail;
     
-            if (!$this->isUsernameValid($request->username, $user->username)) {
-                return response()->json([
-                    'message' => 'Invalid username'
-                ], 422);
-            }
             // Verify current password
             if (!Hash::check($request->currentPassword, $user->password)) {
                 return response()->json([
@@ -43,7 +38,7 @@ class UserDetailController extends Controller
                 ], 422);
             }
             
-            $user->password = $user['newPassword'];
+            $user->password = Hash::make($user['newPassword']);
             $user->save();
             DB::commit();
     

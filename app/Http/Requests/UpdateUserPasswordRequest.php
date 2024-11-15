@@ -12,8 +12,13 @@ class UpdateUserPasswordRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::check();
-        // return true;
+        $user = Auth::user();
+        return response()->json([
+            'authenticated' => true,
+            'user' => [
+                'id' => $user->id,
+            ]
+        ]);
     }
 
     /**
@@ -24,7 +29,6 @@ class UpdateUserPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => ['sometimes', 'string', 'max:255'],
             'currentPassword' => ['required', 'string'],
             'newPassword' => ['required', 'sometimes', 'string', 'min:8'],
             'newPassword_confirmation' => ['required', 'sometimes', 'string', 'min:8']

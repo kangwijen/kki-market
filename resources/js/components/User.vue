@@ -78,12 +78,6 @@
                         <div class="space-y-4">
                             <div class="shadow-xl card bg-base-100">
                                 <div class="card-body">
-                                    <h3 class="card-title">Username</h3>
-                                    <input v-model="user.username" placeholder="Username" class="w-full input input-bordered" />
-                                </div>
-                            </div>
-                            <div class="shadow-xl card bg-base-100">
-                                <div class="card-body">
                                     <h3 class="card-title">Current password</h3>
                                     <input type="password" v-model="user.currentPassword" placeholder="Confirm Password" class="w-full mt-4 input input-bordered" />
                                 </div>
@@ -178,23 +172,6 @@ export default {
 
         const updatePassword = async (userData) => {
             try {
-                // if (!validatePasswords()) return;
-                // if (!this.user.newPassword) {
-                //     this.showPopup('Error', 'New password is required', 'error');
-                //     return false;
-                // }
-                // if (this.user.newPassword.length < 8) {
-                //     this.showPopup('Error', 'New password must be at least 8 characters', 'error');
-                //     return false;
-                // }
-                // if (this.user.newPassword !== this.user.newPassword_confirmation) {
-                //     this.showPopup('Error', 'New password is required', 'error');
-                //     return false;
-                // }
-                // if (this.user.currentPassword === this.user.newPassword) {
-                //     this.showPopup('Error', 'New password must be different from current password', 'error');
-                //     return false;
-                // }
                 if (!userData.newPassword) {
                     showPopup('Error', 'New password is required', 'error');
                     return false;
@@ -215,16 +192,16 @@ export default {
                     return false;
                 }
                 const updateData = { 
-                    username: userData.username,
                     currentPassword: userData.currentPassword,
                     newPassword: userData.newPassword,
                     newPassword_confirmation: userData.newPassword_confirmation
                 };
                 // showPopup('error', 'keren');
-
+                // console.log(updateData);
                 await axios.put('/user-details', updateData);
                 showPopup('Success', 'Password updated successfully', 'success');
             } catch (error) {
+                // console.error('Error during update:', error);
                 showPopup('Error', error.response?.data?.message || 'Failed to change password', 'error');
             }
         };
