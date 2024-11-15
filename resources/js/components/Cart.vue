@@ -6,7 +6,7 @@
         </div>
 
         <div v-if="cartItems.length === 0" class="grid gap-8 md:grid-cols-3">
-                <div class="mt-4 md:col-span-2">Your cart is empty. Add items to your cart to display here. </div>
+                <div class="mt-4 md:col-span-2">Your cart is empty. Add items to your cart to see them displayed here. </div>
                 <div class="p-6 space-y-6 shadow-xl card bg-base-100">
                 <div>
                     <h2 class="mb-4 text-2xl font-semibold">Order Summary</h2>
