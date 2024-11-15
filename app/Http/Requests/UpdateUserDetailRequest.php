@@ -11,7 +11,8 @@ class UpdateUserDetailRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->id === $this->request->get('id');
+        $result = $this->user()->id === $this->request->get('id') || $this->user()->role_id === 1;
+        return $result;
     }
 
     /**

@@ -469,8 +469,28 @@ export default {
             }
         };
         
-        const updateUser = (user) => {
-            showPopup('Update User', 'This feature is not yet implemented', 'info');
+        const updateUser = async (user) => {
+            // showPopup('Update User', 'This feature is not yet implemented', 'info');
+            try {
+                if (user.email === '') {
+                    showPopup('Error', 'Please enter new email', 'error');
+                    return false;
+                }
+
+                if (user.username === '') {
+                    showPopup('Error', 'Please enter new username', 'error');
+                    return false;
+                }
+
+                const updateData = { ...user};
+                
+                await axios.put('/user-update/${user.id}', updateData);
+                showPopup('Success', 'User details updated successfully', 'success');
+                clearPasswords();
+            } catch (error) {
+                console.log(error);
+                showPopup('Error', error.response?.data?.error || 'Failed to update user details', 'error');
+            }
         };
 
         const handleDeleteUser = (user) => {
