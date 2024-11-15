@@ -12,13 +12,7 @@ class UpdateUserPasswordRequest extends FormRequest
      */
     public function authorize()
     {
-        $user = Auth::user();
-        return response()->json([
-            'authenticated' => true,
-            'user' => [
-                'id' => $user->id,
-            ]
-        ]);
+        return $this->user()->id === $this->request->get('id');
     }
 
     /**
