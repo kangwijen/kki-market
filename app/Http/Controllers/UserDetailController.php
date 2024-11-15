@@ -139,7 +139,8 @@ class UserDetailController extends Controller
 
             if ($response->failed()) {
                 return response()->json([
-                    'message' => 'Payment Processor Error: ' . $response->json()['message']
+                    'message' => 'An error occurred while purchasing credits',
+                    'error' => 'Payment Processor Error: ' . $response->json()['message']
                 ], 500);
             }
 

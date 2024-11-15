@@ -34,13 +34,18 @@ class RegisterController extends Controller
             ]);
         
             DB::commit();
-            return redirect()->route('login');
+
+            return response()->json([
+                'message' => 'Registration successful',
+                'user' => $user
+            ], 201);
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()
-                ->back()
-                ->withInput()
-                ->withErrors(['error' => 'Registration failed. Please try again.']);
+            
+            return response()->json([
+                'message' => 'Registration failed',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 }

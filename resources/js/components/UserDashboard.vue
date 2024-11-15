@@ -58,7 +58,7 @@
                                     <div class="shadow-xl card bg-base-100">
                                         <div class="card-body">
                                             <h3 class="card-title">Confirm New password</h3>
-                                            <input type="password" v-model="user.newPassword_confirmation" placeholder="Confirm New Password" class="w-full mt-4 input input-bordered" />
+                                            <input type="password" v-model="user.newPasswordConfirm" placeholder="Confirm New Password" class="w-full mt-4 input input-bordered" />
                                         </div>
                                     </div>
                             </div>
@@ -193,7 +193,7 @@ export default {
                 const { currentPassword, ...userData } = response.data.user;
                 user.value = { ...userData, currentPassword: '', newPassword: '', newPasswordConfirm: '' };
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to fetch user details', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to fetch user details', 'error');
             }
         };
 
@@ -212,7 +212,7 @@ export default {
                 const response = await axios.get('/user-details/purchase-history');
                 purchaseHistory.value = response.data;
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to fetch purchase history', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to fetch purchase history', 'error');
             }
         };
 
@@ -221,6 +221,8 @@ export default {
                 showPopup('Error', 'Please enter your current password', 'error');
                 return false;
             }
+
+            console.log(user.value);
 
             if (user.value.newPassword !== '' && user.value.newPassword !== user.value.newPasswordConfirm) {
                 showPopup('Error', 'New password and confirm password do not match', 'error');
@@ -240,7 +242,7 @@ export default {
                 showPopup('Success', 'User details updated successfully', 'success');
                 clearPasswords();
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to update user details', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to update user details', 'error');
             }
         };
 
@@ -254,7 +256,7 @@ export default {
                 showPopup('Success', 'Password updated successfully', 'success');
                 clearPasswords();
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to update password', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to update password', 'error');
             }
         };
 
@@ -305,7 +307,7 @@ export default {
                 this.amount = parseFloat(this.amount).toFixed(2);
                 this.showPopup('Success', 'Credits purchased successfully', 'success');
             } catch (error) {
-                this.showPopup('Error', error.response?.data?.message || 'Failed to purchase credits', 'error');
+                this.showPopup('Error', error.response?.data?.error || 'Failed to purchase credits', 'error');
             }
         }
     }
