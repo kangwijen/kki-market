@@ -1,7 +1,7 @@
 <template>
     <div class="min-h-screen p-8 bg-base-300">
-        <div class="mb-4 flex items-center">
-                <a @click="$router.back()" class="btn btn-secondary rounded-full items-center justify-center">⮜</a>
+        <div class="flex items-center mb-4">
+                <a @click="$router.back()" class="items-center justify-center rounded-full btn btn-secondary">⮜</a>
                 <h1 class="ml-5 text-3xl font-bold">Your Cart</h1>
         </div>
 

@@ -1,9 +1,9 @@
 <template>
-    <div class="p-8 flex items-center bg-base-300">
-            <a @click="$router.back()" class="btn btn-secondary rounded-full items-center justify-center">⮜</a>
+    <div class="flex items-center p-8 bg-base-300">
+            <a @click="$router.back()" class="items-center justify-center rounded-full btn btn-secondary">⮜</a>
             <h1 class="ml-5 text-3xl font-bold">Admin Dashboard</h1>
     </div>
-    <div class="flex flex-col h-full md:flex-row">
+    <div class="flex flex-col min-h-screen md:flex-row">
         <Sidebar 
             :tabs="adminTabs" 
             :activeTab="activeTab" 
