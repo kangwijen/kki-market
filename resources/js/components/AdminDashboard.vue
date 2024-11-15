@@ -172,7 +172,6 @@
                         <div v-for="user in users" :key="user.id">
                             <div class="shadow-xl card bg-base-100">
                                 <div class="card-body">
-                                    <!-- User Basic Info Section -->
                                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                         <div class="space-y-4">
                                             <h2 class="text-xl font-bold">Basic Information</h2>
@@ -183,8 +182,7 @@
                                                 <input 
                                                     v-model="user.username" 
                                                     type="text"
-                                                    class="input input-bordered" 
-                                                    :readonly="true"
+                                                    class="input input-bordered"
                                                 />
                                             </div>
                                             <div class="form-control">
@@ -194,8 +192,7 @@
                                                 <input 
                                                     v-model="user.email" 
                                                     type="email" 
-                                                    class="input input-bordered" 
-                                                    :readonly="true"
+                                                    class="input input-bordered"
                                                 />
                                             </div>
                                             <div class="form-control">
