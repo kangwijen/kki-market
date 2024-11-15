@@ -336,7 +336,7 @@ export default {
                 const response = await axios.get('/product-types');
                 productTypes.value = response.data;
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to fetch product types', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to fetch product types', 'error');
             }
         };
 
@@ -345,7 +345,7 @@ export default {
                 const response = await axios.get('/products');
                 products.value = response.data;
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to fetch products', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to fetch products', 'error');
             }
         };
 
@@ -357,7 +357,7 @@ export default {
                     user.role_name = user.role_id === 1 ? 'Admin' : 'User';
                 });
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to fetch user details', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to fetch user details', 'error');
             }
         };
 
@@ -377,7 +377,7 @@ export default {
                     product_type_id: ''
                 };
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to create product', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to create product', 'error');
             }
         };
 
@@ -388,7 +388,7 @@ export default {
                 showPopup('Success', 'Product type created successfully', 'success');
                 newProductType.value = { name: '' };
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to create product type', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to create product type', 'error');
             }
         };
 
@@ -399,7 +399,7 @@ export default {
                 await axios.put(`/product/${product.id}`, product);
                 showPopup('Success', 'Product updated successfully', 'success');
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to update product', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to update product', 'error');
             }
         };
 
@@ -424,7 +424,7 @@ export default {
                 showPopup('Success', 'Product type updated successfully', 'success');
                 updateForm.value = { id: '', name: '' };
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to update product type', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to update product type', 'error');
             }
         };
 
@@ -468,7 +468,7 @@ export default {
                     }
                 }
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to upload image', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to upload image', 'error');
             }
         };
         

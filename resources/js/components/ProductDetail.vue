@@ -82,7 +82,6 @@ export default {
                     router.push('/search')
                 }
             } catch (error) {
-                console.error('Error fetching product:', error)
                 router.push('/search')
             }
         }
@@ -112,13 +111,7 @@ export default {
                 showPopup('Success', 'Product added to cart successfully!', 'success')
                 window.dispatchEvent(new Event('cart-updated'));
             } catch (error) {
-                if (error.response && error.response.status === 400) {
-                    showPopup('Info', error.response.data.message, 'info')
-                } else {
-                    console.error('Error adding to cart:', error)
-                    const message = error.response.data.message || 'An error occurred while adding to cart'
-                    showPopup('Error', message, 'error')
-                }
+                showPopup('Error', error.response?.data?.error || 'Failed to update password', 'error');
             }
         }
 

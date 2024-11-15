@@ -193,7 +193,6 @@ export default {
                 const response = await axios.get('/user-details/balance');
                 userBalance.value = response.data.balance;
             } catch (error) {
-                console.error('Error fetching user balance:', error);
                 showPopup('Error', 'Failed to load balance', 'error');
             }
         }
@@ -203,7 +202,6 @@ export default {
                 const response = await axios.get('/cart');
                 cartItems.value = response.data;
             } catch (error) {
-                console.error('Error fetching cart:', error);
                 showPopup('Error', 'Failed to load cart items', 'error');
             }
         }
@@ -224,12 +222,7 @@ export default {
                 showPopup('Success', 'Quantity updated successfully', 'success')
                 window.dispatchEvent(new Event('cart-updated'));
             } catch (error) {
-                if (error.response && error.response.status === 400) {
-                    showPopup('Error', error.response.data.message, 'error')
-                } else {
-                    console.error('Error updating quantity:', error)
-                    showPopup('Error', 'Failed to update quantity. Please try again.', 'error')
-                }
+                showPopup('Error', error.response?.data?.error || 'Failed to update quantity.', 'error')
             }
         }
 
@@ -240,8 +233,7 @@ export default {
                 showPopup('Success', 'Item removed from cart', 'success')
                 window.dispatchEvent(new Event('cart-updated'));
             } catch (error) {
-                console.error('Error removing item from cart:', error)
-                showPopup('Error', 'Failed to remove item from cart. Please try again.', 'error')
+                showPopup('Error', error.response?.data?.error || 'Failed to remove item from cart.', 'error')
             }
         }
 
@@ -279,9 +271,7 @@ export default {
 
                 checkoutStep.value = 'success'
             } catch (error) {
-                console.error('Purchase error:', error)
-                const errorMessage = error.response?.data?.message || 'Purchase failed. Please try again.'
-                showPopup('Error', errorMessage, 'error')
+                showPopup('Error', error.response?.data?.error || 'Failed to process payment', 'error')
                 checkoutStep.value = 'confirmation'
             } finally {
                 isProcessing.value = false

@@ -83,7 +83,6 @@ export default {
                 isAdmin.value = response.data.user?.isAdmin || false;
                 window.dispatchEvent(new Event('login'));
             } catch (error) {
-                console.error('Error checking authentication:', error);
                 isAuthenticated.value = false;
                 isAdmin.value = false;
             }
@@ -97,7 +96,7 @@ export default {
                 window.dispatchEvent(new Event('logout'));
                 router.push('/');
             } catch (error) {
-                console.error('Error logging out:', error);
+                showPopup('Error', error.response?.data?.error || 'Failed to logout user', 'error');
             }
         };
 
@@ -106,7 +105,7 @@ export default {
                 await axios.get('/admin');
                 router.push('/admin');
             } catch (error) {
-                console.error('Error accessing admin:', error);
+                showPopup('Error', error.response?.data?.error || 'Failed to access admin page', 'error');
             }
         };
 
@@ -115,7 +114,7 @@ export default {
                 await axios.get('/profile');
                 router.push('/profile');
             } catch (error) {
-                console.error('Error accessing user:', error);
+                showPopup('Error', error.response?.data?.error || 'Failed to access profile page', 'error');
             }
         };
 
@@ -129,7 +128,7 @@ export default {
                     );
                 }
             } catch (error) {
-                console.error('Error updating cart count:', error);
+                showPopup('Error', error.response?.data?.error || 'Failed to fetch cart items', 'error');
                 cartCount.value = 0;
             }
         };

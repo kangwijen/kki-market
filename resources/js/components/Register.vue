@@ -79,12 +79,7 @@ export default {
                 showPopup('Success', 'Registration successful! Please log in.', 'success');
                 router.push('/login');
             } catch (error) {
-                if (error.response && error.response.data && error.response.data.errors) {
-                    const errorMessages = Object.values(error.response.data.errors).flat();
-                    showPopup('Error', errorMessages.join(' '), 'error');
-                } else {
-                    showPopup('Error', 'An unexpected error occurred. Please try again.', 'error');
-                }
+                showPopup('Error', error.response?.data?.error || 'Failed to register. Please try again.', 'error');
             }
         };
 

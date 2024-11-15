@@ -205,7 +205,6 @@ export default {
                 const response = await axios.get('/user-details/balance');
                 userBalance.value = response.data.balance;
             } catch (error) {
-                console.error('Error fetching user balance:', error);
                 showPopup('Error', 'Failed to load balance', 'error');
             }
         }
