@@ -1,15 +1,16 @@
 <template>
-    <div>
-        
-    </div>
     <div v-if="product" class="min-h-screen p-8 bg-base-300">
-        <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <div class="flex flex-col space-y-6 md:col-span-2">
+        <div class="flex items-center bg-base-300">
+                <a @click="$router.back()" class="btn btn-secondary rounded-full items-center justify-center">⮜</a>
+                <h1 class="ml-5 text-3xl font-bold">Product Details</h1>
+        </div>
+        <div class="mt-4 grid grid-cols-1 gap-8 md:grid-cols-3">
+            <div class="flex flex-col space-y-4 md:col-span-2">
                 <div class="flex justify-center max-w-full p-4 rounded-md shadow lg:max-w-screen">
                     <img class="w-auto h-auto md:h-[500px] object-cover rounded-md bg-center" :src="'/storage/' + product.img_path" :alt="product.name">
                 </div>
                 
-                <div class="p-6 rounded-md shadow">
+                <div class="p-4 rounded-md shadow">
                     <h1 class="mb-4 text-2xl font-bold">{{ product.name }}</h1>
         
                     <div class="flex items-center gap-2 mb-4">

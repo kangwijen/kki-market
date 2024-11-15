@@ -3,7 +3,7 @@
             <a @click="$router.back()" class="btn btn-secondary rounded-full items-center justify-center">⮜</a>
             <h1 class="ml-5 text-3xl font-bold">User Dashboard</h1>
     </div>
-    <div class="flex flex-col h-screen md:flex-row">
+    <div class="flex flex-col h-full md:flex-row">
         <Sidebar 
             :tabs="userTabs" 
             :activeTab="activeTab" 
