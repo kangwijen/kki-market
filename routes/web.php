@@ -16,7 +16,10 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::prefix('/api')->middleware('auth:sanctum')->group(function () {
     Route::get('/user-details', [AuthController::class, 'user']);
     Route::put('/user-details', [UserDetailController::class, 'update']);
+    Route::put('/user-details', [UserDetailController::class, 'updatePassword']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    
+    
 
     Route::get('/products', [ProductController::class, 'index']);
     Route::get('/product/{id}', [ProductController::class, 'show']);

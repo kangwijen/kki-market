@@ -9,10 +9,51 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Http\Requests\StoreUserDetailRequest;
 use App\Http\Requests\UpdateUserDetailRequest;
+use App\Http\Requests\UpdateUserPasswordRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+
 
 class UserDetailController extends Controller
 {
+    public function showChangePasswordForm()
+    {
+        return view('auth.change-password');
+    }
+
+    public function updatePassword(UpdateUserPasswordRequest $request)
+    {
+       
+    
+        try {
+            DB::beginTransaction();
+    
+            // Get the authenticated user
+            $user = Auth::user()->userDetail;
+    
+            // Verify current password
+            if (!Hash::check($request->currentPassword, $user->password)) {
+                return response()->json([
+                    'error' => 'Current password is incorrect.'
+                ], 422);
+            }
+            
+            $user->password = Hash::make($user['newPassword']);
+            $user->save();
+            DB::commit();
+    
+            return response()->json([
+                'message' => 'Password updated successfully.',
+                'status' => true
+            ], 200);
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            return $this->errorResponse('Password update failed', 500);
+        }
+    }
+    
+
     /**
      * Display a listing of the resource.
      */
@@ -67,6 +108,7 @@ class UserDetailController extends Controller
         // Get validated data
         $validated = $request->validated();
         
+        
         // Remove currentPassword from validated data
         unset($validated['currentPassword']);
         
@@ -78,6 +120,8 @@ class UserDetailController extends Controller
             'message' => 'User details updated successfully',
             'user' => $user
         ], 200);
+
+
     }
 
     /**
