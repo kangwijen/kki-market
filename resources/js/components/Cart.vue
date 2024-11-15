@@ -30,7 +30,7 @@
             <div class="mb-4 text-xl">
                 Total: ${{ formatPrice(cartTotal) }}
             </div>
-            <button class="w-full btn btn-primary" @click="checkout(cartTotal)">Proceed to Checkout</button>
+            <button class="w-full btn btn-primary" @click="checkout()">Proceed to Checkout</button>
             </div>
         </div>
         <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
@@ -111,7 +111,6 @@ export default {
         })
         
         const checkout = async() => {
-            // alert('Checkout functionality not implemented yet.')
             try {
                 const response = await axios.post('/cart/checkout');
                 showPopup('Success', response.data.message, 'success');
