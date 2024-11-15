@@ -9,6 +9,7 @@ class ProductDetail extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'product_id';
     protected $fillable = ['product_id', 'price', 'stock', 'sold', 'description'];
 
     protected $casts = [
