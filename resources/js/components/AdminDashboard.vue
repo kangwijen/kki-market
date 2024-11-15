@@ -1,7 +1,10 @@
 <template>
+    <div class="p-8 flex items-center bg-base-300">
+            <a @click="$router.back()" class="btn btn-secondary rounded-full items-center justify-center">⮜</a>
+            <h1 class="ml-5 text-3xl font-bold">Admin Dashboard</h1>
+    </div>
     <div class="flex flex-col h-screen md:flex-row">
         <Sidebar 
-            title="Admin Dashboard" 
             :tabs="adminTabs" 
             :activeTab="activeTab" 
             @changeTab="handleTabChange" 

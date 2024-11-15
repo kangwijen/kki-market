@@ -1,7 +1,10 @@
 <template>
     <div class="min-h-screen p-4 sm:p-8 bg-base-300">
+        <div class="mb-4 flex items-center mb-4">
+            <a @click="$router.back()" class="btn btn-secondary rounded-full items-center justify-center">⮜</a>
+            <h1 class="ml-5 text-3xl font-bold">Products</h1>
+        </div>
         <div class="mb-6 space-y-2">
-            <h1 class="text-3xl font-bold">Products</h1>
             <label for="search" class="block mb-2 text-lg font-bold">Search for products:</label>
             <input v-model="searchQuery" type="text" id="search" placeholder="Type here..." class="w-full input input-bordered input-primary" @input="searchProducts" />
         </div>
