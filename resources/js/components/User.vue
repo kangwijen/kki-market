@@ -196,12 +196,9 @@ export default {
                     newPassword: userData.newPassword,
                     newPassword_confirmation: userData.newPassword_confirmation
                 };
-                // showPopup('error', 'keren');
-                // console.log(updateData);
                 await axios.put('/user-details', updateData);
                 showPopup('Success', 'Password updated successfully', 'success');
             } catch (error) {
-                // console.error('Error during update:', error);
                 showPopup('Error', error.response?.data?.message || 'Failed to change password', 'error');
             }
         };
