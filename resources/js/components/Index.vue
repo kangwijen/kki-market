@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import Typed from 'typed.js';
 import axios from 'axios';
 import { useRouter } from 'vue-router';

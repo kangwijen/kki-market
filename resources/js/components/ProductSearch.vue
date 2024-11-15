@@ -27,20 +27,34 @@
             </div>
         
             <div class="lg:col-span-3">
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">        
-                    <div v-for="product in filteredProducts" :key="product.id" class="shadow-xl card bg-base-100">
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <div v-for="product in filteredProducts" :key="product.id" class="relative overflow-hidden transition-transform rounded-lg shadow-lg card hover:scale-105">
                         <figure class="relative">
-                            <img :src="'/storage/' + product.img_path" :alt="product.name" class="object-cover w-full h-48" />
-                            <span v-if="product.discount" class="absolute px-2 py-1 text-xs text-white rounded-full top-2 left-2 bg-primary">{{ product.discount }}% Off</span>
+                            <img :src="'/storage/' + product.img_path" :alt="product.name" class="object-cover w-full h-48 rounded-t-lg" />
+                            
+                            <div v-if="!product.product_detail?.stock" class="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-60">
+                                <span class="px-4 py-2 text-lg font-semibold text-white bg-red-500 rounded">Sold Out</span>
+                            </div>
+                            
+                            <span class="absolute px-3 py-1 font-bold text-white rounded-full text-s top-2 right-2 bg-primary">
+                                Sold: {{ product.product_detail?.sold ?? 'N/A' }}
+                            </span>
                         </figure>
-                        <div class="card-body">
-                            <h3 class="card-title">{{ product.name }}</h3>
-                            <p class="text-lg text-primary">${{ product.product_detail?.price ?? 'N/A' }}</p>
-                            <div class="flex flex-col space-y-2 sm:flex-row sm:justify-between sm:space-y-0">
-                                <button v-if="product && product.id" class="btn btn-secondary" @click="goToProductDetails(product.id)">
+
+                        <div class="p-4 card-body">
+                            <h3 class="text-lg font-semibold text-white card-title">{{ product.name }}</h3>
+                            
+                            <div class="flex items-center justify-between mt-2">
+                                <p class="text-xl font-bold text-primary">${{ product.product_detail?.price ?? 'N/A' }}</p>
+                            </div>
+
+                            <div v-if="product.product_detail?.stock > 0" class="flex mt-4 space-x-2">
+                                <button @click="goToProductDetails(product.id)" class="flex-1 transition btn btn-outline btn-secondary hover:bg-secondary hover:text-white">
                                     Details
                                 </button>
-                                <button class="btn btn-primary" @click="addToCart(product)">Add to Cart</button>
+                                <button @click="addToCart(product)" class="flex-1 transition btn btn-primary hover:bg-primary-dark">
+                                    Add to Cart
+                                </button>
                             </div>
                         </div>
                     </div>

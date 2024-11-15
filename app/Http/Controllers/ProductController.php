@@ -34,9 +34,9 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
+
             $product = Product::create($request->except('product_detail'));
 
             $productDetailData = $request->input('product_detail');
@@ -76,13 +76,24 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        $product->update($request->validated());
-        
-        if ($request->has('product_detail')) {
-            $product->productDetail()->update($request->input('product_detail'));
-        }
+        try {
+            DB::beginTransaction();
 
-        return response()->json($product->load('productDetail', 'productType'));
+            $product->update($request->except('product_detail'));
+
+            if ($request->has('product_detail')) {
+                $product->productDetail()->update($request->input('product_detail'));
+            }
+
+            DB::commit();
+
+            $product->load('productDetail', 'productType');
+
+            return response()->json($product);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => 'Failed to update product: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -99,12 +110,16 @@ class ProductController extends Controller
      */
     public function uploadImage(Request $request)
     {
-        $request->validate([
-            'image' => 'required|image|max:2048',
-        ]);
+        try {
+            $request->validate([
+                'image' => 'required|image|max:2048',
+            ]);
 
-        $imagePath = $request->file('image')->store('.', 'public');
+            $imagePath = $request->file('image')->store('.', 'public');
 
-        return response()->json(['image_path' => $imagePath]);
+            return response()->json(['image_path' => $imagePath]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to upload image: ' . $e->getMessage()], 500);
+        }
     }
 }

@@ -24,7 +24,8 @@ class UpdateUserDetailRequest extends FormRequest
         return [
             'username' => ['sometimes', 'string', 'max:255'],
             'email' => ['sometimes', 'string', 'email', 'max:255'],
-            'new_password' => ['sometimes', 'string', 'min:8'],
+            'newPassword' => ['nullable', 'string', 'min:8'],
+            'newPasswordConfirm' => ['nullable', 'required_with:newPassword', 'string', 'same:newPassword'],
             'currentPassword' => ['required', 'string'],
         ];
     }

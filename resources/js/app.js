@@ -8,10 +8,11 @@ import Cart from './components/Cart.vue'
 import Login from './components/Login.vue'
 import Register from './components/Register.vue'
 import Navbar from './components/Navbar.vue'
-import Admin from './components/Admin.vue'
-import User from './components/User.vue'
+import AdminDashboard from './components/AdminDashboard.vue'
+import UserDashboard from './components/UserDashboard.vue'
 import axios from 'axios'
 import NotFound from './components/NotFound.vue'
+import Sidebar from './components/Sidebar.vue';
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = 'http://localhost:8000/api';
@@ -23,8 +24,8 @@ const routes = [
     { path: '/cart', name: 'cart', component: Cart },
     { path: '/login', component: Login },
     { path: '/register', component: Register },
-    { path: '/admin', name: 'admin', component: Admin },
-    { path: '/user', name: 'user', component: User },
+    { path: '/admin', name: 'admin', component: AdminDashboard },
+    { path: '/profile', name: 'profile', component: UserDashboard },
     { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound }
 ]
 
@@ -44,7 +45,8 @@ router.beforeEach((to, from, next) => {
 
 const app = createApp({
     components: {
-        Navbar
+        Navbar,
+        Sidebar
     },
     template: `
         <Navbar />
