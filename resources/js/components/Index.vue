@@ -36,7 +36,6 @@ export default {
                 const response = await axios.get('/user-details')
                 isAuthenticated.value = response.data.authenticated
             } catch (error) {
-                console.error('Error checking authentication:', error)
                 isAuthenticated.value = false
             }
         };
