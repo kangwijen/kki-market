@@ -484,9 +484,8 @@ export default {
 
                 const updateData = { ...user};
                 
-                await axios.put('/user-update/${user.id}', updateData);
+                await axios.put(`/user-update/${user.id}`, updateData);
                 showPopup('Success', 'User details updated successfully', 'success');
-                clearPasswords();
             } catch (error) {
                 console.log(error);
                 showPopup('Error', error.response?.data?.error || 'Failed to update user details', 'error');

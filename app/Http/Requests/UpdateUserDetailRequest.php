@@ -22,6 +22,13 @@ class UpdateUserDetailRequest extends FormRequest
      */
     public function rules(): array
     {
+        if($this->user()->role_id === 1){
+            return [
+                'username' => ['sometimes', 'string', 'max:255'],
+                'email' => ['sometimes', 'string', 'email', 'max:255']
+            ];
+        }
+
         return [
             'username' => ['sometimes', 'string', 'max:255'],
             'email' => ['sometimes', 'string', 'email', 'max:255'],

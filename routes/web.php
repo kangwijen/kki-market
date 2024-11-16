@@ -25,8 +25,7 @@ Route::prefix('/api')->middleware('auth:sanctum')->group(function () {
     Route::put('/user-details', [UserDetailController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
     
-    Route::put('/user-update/{id}', [UserDetailController::class, 'updateUser']);
-
+    
     Route::get('/products', [ProductController::class, 'index']);
     Route::get('/product/{id}', [ProductController::class, 'show']);
 
@@ -40,7 +39,8 @@ Route::prefix('/api')->middleware('auth:sanctum')->group(function () {
         Route::post('/product-types', [ProductTypeController::class, 'store']);
         Route::put('/product-types/{productType}', [ProductTypeController::class, 'update']);
         Route::delete('/product-types/{productType}', [ProductTypeController::class, 'destroy']);
-
+        
+        Route::put('/user-update/{id}', [UserDetailController::class, 'updateUser']);
 
     });
 
