@@ -1,13 +1,13 @@
 <template>
     <div v-if="product" class="min-h-screen p-8 bg-base-300">
         <div class="flex items-center bg-base-300">
-                <a @click="$router.back()" class="btn btn-secondary rounded-full items-center justify-center">⮜</a>
+                <a @click="$router.back()" class="items-center justify-center rounded-full btn btn-secondary">⮜</a>
                 <h1 class="ml-5 text-3xl font-bold">Product Details</h1>
         </div>
-        <div class="mt-4 grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div class="grid grid-cols-1 gap-8 mt-4 md:grid-cols-3">
             <div class="flex flex-col space-y-4 md:col-span-2">
                 <div class="flex justify-center max-w-full p-4 rounded-md shadow lg:max-w-screen">
-                    <img class="w-auto h-auto md:h-[500px] object-cover rounded-md bg-center" :src="'/storage/' + product.img_path" :alt="product.name">
+                    <img class="w-auto h-auto md:h-[500px] object-cover bg-center" :src="'/storage/' + product.img_path" :alt="product.name">
                 </div>
                 
                 <div class="p-4 rounded-md shadow">
@@ -82,7 +82,6 @@ export default {
                     router.push('/search')
                 }
             } catch (error) {
-                console.error('Error fetching product:', error)
                 router.push('/search')
             }
         }
@@ -112,13 +111,7 @@ export default {
                 showPopup('Success', 'Product added to cart successfully!', 'success')
                 window.dispatchEvent(new Event('cart-updated'));
             } catch (error) {
-                if (error.response && error.response.status === 400) {
-                    showPopup('Info', error.response.data.message, 'info')
-                } else {
-                    console.error('Error adding to cart:', error)
-                    const message = error.response.data.message || 'An error occurred while adding to cart'
-                    showPopup('Error', message, 'error')
-                }
+                showPopup('Error', error.response?.data?.error || 'Failed to update password', 'error');
             }
         }
 

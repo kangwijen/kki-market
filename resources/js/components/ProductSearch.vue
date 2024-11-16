@@ -1,7 +1,7 @@
 <template>
     <div class="min-h-screen p-4 sm:p-8 bg-base-300">
-        <div class="mb-4 flex items-center mb-4">
-            <a @click="$router.back()" class="btn btn-secondary rounded-full items-center justify-center">⮜</a>
+        <div class="flex items-center mb-4">
+            <a @click="$router.back()" class="items-center justify-center rounded-full btn btn-secondary">⮜</a>
             <h1 class="ml-5 text-3xl font-bold">Products</h1>
         </div>
         <div class="mb-6 space-y-2">
@@ -103,7 +103,6 @@ export default {
 
         const categories = computed(() => {
             if (!Array.isArray(products.value)) {
-                console.error('Products is not an array:', products.value);
                 return [];
             }
             const categorySet = new Set(products.value.map(p => {return p.product_type.name;}).filter(Boolean));
@@ -134,11 +133,11 @@ export default {
                 if (Array.isArray(response.data)) {
                     products.value = response.data
                 } else {
-                    console.error('Expected an array of products:', response.data)
+                    showPopup('Error', error.response?.data?.error || 'Failed to fetch products', 'error')
                     products.value = []
                 }
             } catch (error) {
-                console.error('Error fetching products:', error)
+                showPopup('Error', error.response?.data?.error || 'Failed to fetch products', 'error')
                 products.value = []
             }
         }
@@ -152,13 +151,7 @@ export default {
                 showPopup('Success', 'Product added to cart successfully!', 'success')
                 window.dispatchEvent(new Event('cart-updated'));
             } catch (error) {
-                if (error.response && error.response.status === 400) {
-                    showPopup('Info', error.response.data.message, 'info')
-                } else {
-                    console.error('Error adding to cart:', error)
-                    const message = error.response.data.message || 'An error occurred while adding to cart'
-                    showPopup('Error', message, 'error')
-                }
+                showPopup('Error', error.response?.data?.error || 'Failed to add product to cart', 'error')
             }
         }
 

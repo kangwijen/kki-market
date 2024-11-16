@@ -73,13 +73,10 @@ class UserDetailController extends Controller
                 ]);
             }
 
-            // Get validated data
             $validated = $request->validated();
             
-            // Remove currentPassword from validated data
             unset($validated['currentPassword']);
 
-            // Update user details
             $user = User::find(Auth::id());
             if (isset($validated['newPassword'])) {
                 $validated['password'] = Hash::make($validated['newPassword']);

@@ -1,6 +1,6 @@
 <template>
-    <div class="p-8 flex items-center bg-base-300">
-            <a @click="$router.back()" class="btn btn-secondary rounded-full items-center justify-center">⮜</a>
+    <div class="flex items-center p-8 bg-base-300">
+            <a @click="$router.back()" class="items-center justify-center rounded-full btn btn-secondary">⮜</a>
             <h1 class="ml-5 text-3xl font-bold">User Dashboard</h1>
     </div>
     <div class="flex flex-col min-h-screen md:flex-row">
@@ -205,7 +205,6 @@ export default {
                 const response = await axios.get('/user-details/balance');
                 userBalance.value = response.data.balance;
             } catch (error) {
-                console.error('Error fetching user balance:', error);
                 showPopup('Error', 'Failed to load balance', 'error');
             }
         }
@@ -224,8 +223,6 @@ export default {
                 showPopup('Error', 'Please enter your current password', 'error');
                 return false;
             }
-
-            console.log(user.value);
 
             if (user.value.newPassword !== '' && user.value.newPassword !== user.value.newPasswordConfirm) {
                 showPopup('Error', 'New password and confirm password do not match', 'error');

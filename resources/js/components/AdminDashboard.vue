@@ -1,6 +1,6 @@
 <template>
-    <div class="p-8 flex items-center bg-base-300">
-            <a @click="$router.back()" class="btn btn-secondary rounded-full items-center justify-center">⮜</a>
+    <div class="flex items-center p-8 bg-base-300">
+            <a @click="$router.back()" class="items-center justify-center rounded-full btn btn-secondary">⮜</a>
             <h1 class="ml-5 text-3xl font-bold">Admin Dashboard</h1>
     </div>
     <div class="flex flex-col min-h-screen md:flex-row">
@@ -172,7 +172,6 @@
                         <div v-for="user in users" :key="user.id">
                             <div class="shadow-xl card bg-base-100">
                                 <div class="card-body">
-                                    <!-- User Basic Info Section -->
                                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                         <div class="space-y-4">
                                             <h2 class="text-xl font-bold">Basic Information</h2>
@@ -183,8 +182,7 @@
                                                 <input 
                                                     v-model="user.username" 
                                                     type="text"
-                                                    class="input input-bordered" 
-                                                    :readonly="true"
+                                                    class="input input-bordered"
                                                 />
                                             </div>
                                             <div class="form-control">
@@ -194,8 +192,7 @@
                                                 <input 
                                                     v-model="user.email" 
                                                     type="email" 
-                                                    class="input input-bordered" 
-                                                    :readonly="true"
+                                                    class="input input-bordered"
                                                 />
                                             </div>
                                             <div class="form-control">
@@ -336,7 +333,7 @@ export default {
                 const response = await axios.get('/product-types');
                 productTypes.value = response.data;
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to fetch product types', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to fetch product types', 'error');
             }
         };
 
@@ -345,7 +342,7 @@ export default {
                 const response = await axios.get('/products');
                 products.value = response.data;
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to fetch products', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to fetch products', 'error');
             }
         };
 
@@ -357,7 +354,7 @@ export default {
                     user.role_name = user.role_id === 1 ? 'Admin' : 'User';
                 });
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to fetch user details', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to fetch user details', 'error');
             }
         };
 
@@ -377,7 +374,7 @@ export default {
                     product_type_id: ''
                 };
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to create product', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to create product', 'error');
             }
         };
 
@@ -388,7 +385,7 @@ export default {
                 showPopup('Success', 'Product type created successfully', 'success');
                 newProductType.value = { name: '' };
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to create product type', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to create product type', 'error');
             }
         };
 
@@ -399,7 +396,7 @@ export default {
                 await axios.put(`/product/${product.id}`, product);
                 showPopup('Success', 'Product updated successfully', 'success');
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to update product', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to update product', 'error');
             }
         };
 
@@ -424,7 +421,7 @@ export default {
                 showPopup('Success', 'Product type updated successfully', 'success');
                 updateForm.value = { id: '', name: '' };
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to update product type', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to update product type', 'error');
             }
         };
 
@@ -468,7 +465,7 @@ export default {
                     }
                 }
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to upload image', 'error');
+                showPopup('Error', error.response?.data?.error || 'Failed to upload image', 'error');
             }
         };
         

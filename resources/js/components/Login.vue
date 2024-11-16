@@ -77,12 +77,7 @@ export default {
                 window.dispatchEvent(new Event('login'));
                 router.push('/search');
             } catch (error) {
-                if (error.response && error.response.data && error.response.data.errors) {
-                    const errorMessages = Object.values(error.response.data.errors).flat();
-                    showPopup('Error', errorMessages.join(' '), 'error');
-                } else {
-                    showPopup('Error', 'An unexpected error occurred. Please try again.', 'error');
-                }
+                showPopup('Error', error.response?.data?.message || 'Failed to login. Please try again.', 'error');
             }
         };
 
