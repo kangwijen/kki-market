@@ -5,6 +5,7 @@
     </div>
     <div class="flex flex-col min-h-screen md:flex-row">
         <Sidebar 
+            title=""
             :tabs="userTabs" 
             :activeTab="activeTab" 
             @changeTab="handleTabChange" 
@@ -115,6 +116,7 @@
                                                     <p class="font-semibold">Total: ${{ detail.total_price }}</p>
                                                 </div>
                                             </div>
+                                            <a>Download Link</a>
                                         </div>
                                     </div>
                                 </div>

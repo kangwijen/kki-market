@@ -5,6 +5,7 @@
     </div>
     <div class="flex flex-col min-h-screen md:flex-row">
         <Sidebar 
+            title=""
             :tabs="adminTabs" 
             :activeTab="activeTab" 
             @changeTab="handleTabChange" 
