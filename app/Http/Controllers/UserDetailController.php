@@ -100,22 +100,25 @@ class UserDetailController extends Controller
             ], 500);
         }
     }
+    
     public function updateUser(UpdateUserDetailRequest $request, $id)
     {
         try {
-
-            $validated = $request->validated();
+            DB::beginTransaction();
             
+            $validated = $request->validated();
             $user = User::findOrFail($id);
 
             if (isset($validated['email'])) {
                 $user->email = $validated['email'];
             }
     
-            // Update username if provided
             if (isset($validated['username'])) {
                 $user->username = $validated['username'];
             }
+
+            $allowedFields = ['username', 'email'];
+            $validated = array_intersect_key($validated, array_flip($allowedFields));
             
             $user->update($validated);
 
