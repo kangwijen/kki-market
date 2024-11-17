@@ -22,12 +22,12 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|max:255',
-            'product_type_id' => 'sometimes|exists:product_types,id',
-            'product_detail.description' => 'sometimes|string',
-            'product_detail.price' => 'sometimes|numeric|min:0',
-            'product_detail.stock' => 'sometimes|integer|min:0',
-            'img_path' => 'sometimes|string',
+            'name' => ['sometimes', 'string', 'max:255', 'regex:/^[\p{L}\p{N}\s\-\_\.]+$/u'],
+            'product_type_id' => ['sometimes', 'integer', 'exists:product_types,id'],
+            'product_detail.description' => ['sometimes', 'string', 'max:10000'],
+            'product_detail.price' => ['sometimes', 'numeric', 'min:0', 'max:999999.99'],
+            'product_detail.stock' => ['sometimes', 'integer', 'min:0', 'max:999999'],
+            'img_path' => ['sometimes', 'string', 'max:255', 'regex:/^[\w\-\/\.]+$/'],
         ];
     }
 }

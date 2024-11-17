@@ -23,12 +23,12 @@ class StoreProductRequest extends FormRequest
     public function rules(Request $request): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'product_type_id' => 'required|exists:product_types,id',
-            'product_detail.description' => 'required|string',
-            'product_detail.price' => 'required|numeric|min:0',
-            'product_detail.stock' => 'required|integer|min:0',
-            'img_path' => 'required|string',
+            'name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\p{N}\s\-\_\.]+$/u'],
+            'product_type_id' => ['required', 'integer', 'exists:product_types,id'],
+            'product_detail.description' => ['required', 'string', 'max:10000'],
+            'product_detail.price' => ['required', 'numeric', 'min:0', 'max:999999.99'],
+            'product_detail.stock' => ['required', 'integer', 'min:0', 'max:999999'],
+            'img_path' => ['required', 'string', 'max:255', 'regex:/^[\w\-\/\.]+$/'],
         ];
     }
 }

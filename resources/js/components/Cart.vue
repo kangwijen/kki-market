@@ -210,7 +210,7 @@ export default {
             return new Intl.NumberFormat('en-US', { minimumFractionDigits: 0 }).format(price || 0)
         }
 
-        const validateQuantity = (qty, stock) => {
+        const validateQuantity = (item, qty, stock) => {
             const parsedQty = parseInt(qty);
             if (isNaN(parsedQty) || parsedQty < 1) {
                 showPopup('Error', 'Quantity must be at least 1', 'error');
@@ -218,26 +218,21 @@ export default {
             }
             if (parsedQty > stock) {
                 showPopup('Error', 'Quantity cannot exceed available stock', 'error');
+                item.quantity = stock;
                 return false;
             }
             return true;
         };
 
         const updateQuantity = async (item, newQuantity) => {
-            if (!validateQuantity(newQuantity, item.product.product_detail?.stock)) {
+            if (!validateQuantity(item, newQuantity, item.product.product_detail?.stock)) {
                 return;
             }
 
             try {
                 await axios.put(`/cart/${item.product_id}`, 
                     { quantity: parseInt(newQuantity) }, 
-                    { 
-                        withCredentials: true,
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        }
-                    }
+                    { withCredentials: true }
                 );
                 item.quantity = newQuantity;
                 showPopup('Success', 'Quantity updated successfully', 'success')
@@ -294,10 +289,6 @@ export default {
                         quantity: parseInt(item.quantity)
                     })),
                     transaction_id: transactionId
-                }, {
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    }
                 });
 
                 userBalance.value = parseFloat((userBalance.value - cartTotal.value).toFixed(2));

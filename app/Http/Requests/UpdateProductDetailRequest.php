@@ -20,13 +20,13 @@ class UpdateProductDetailRequest extends FormRequest
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
 
-     public function rules(): array
-     {
-         return [
-             'description' => 'sometimes|string',
-             'price' => 'sometimes|numeric|min:0',
-             'stock' => 'sometimes|integer|min:0',
-             'img_path' => 'sometimes|string',
-         ];
-     }
+    public function rules(): array
+    {
+        return [
+            'description' => ['sometimes', 'string', 'max:10000'],
+            'price' => ['sometimes', 'numeric', 'min:0', 'max:999999.99'],
+            'stock' => ['sometimes', 'integer', 'min:0', 'max:999999'],
+            'img_path' => ['sometimes', 'string', 'max:255', 'regex:/^[\w\-\/\.]+$/'],
+        ];
+    }
 }

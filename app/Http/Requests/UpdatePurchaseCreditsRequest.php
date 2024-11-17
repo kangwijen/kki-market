@@ -11,7 +11,7 @@ class UpdatePurchaseCreditsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user() !== null;
     }
 
     /**
@@ -22,7 +22,7 @@ class UpdatePurchaseCreditsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'amount' => 'required|numeric|min:1',
+            'amount' => ['required', 'numeric', 'min:1', 'max:1000000'],
         ];
     }
 }
