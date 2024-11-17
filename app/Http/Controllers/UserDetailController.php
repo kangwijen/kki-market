@@ -77,7 +77,7 @@ class UserDetailController extends Controller
             
             unset($validated['currentPassword']);
 
-            $user = User::find(Auth::id());
+            $user = User::findOrFail(Auth::user()->id);
             if (isset($validated['newPassword'])) {
                 $validated['password'] = Hash::make($validated['newPassword']);
                 unset($validated['newPassword']);
@@ -85,12 +85,11 @@ class UserDetailController extends Controller
             }
             
             $user->update($validated);
-
+            
             DB::commit();
 
             return response()->json([
-                'message' => 'User details updated successfully',
-                'user' => $user
+                'message' => 'User details updated successfully'
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -101,7 +100,7 @@ class UserDetailController extends Controller
         }
     }
     
-    public function updateUser(UpdateUserDetailRequest $request, $id)
+    public function updateAdmin(UpdateUserDetailRequest $request, $id)
     {
         try {
             DB::beginTransaction();
@@ -125,8 +124,7 @@ class UserDetailController extends Controller
             DB::commit();
 
             return response()->json([
-                'message' => 'User details updated successfully',
-                'user' => $user
+                'message' => 'User details updated successfully'
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();

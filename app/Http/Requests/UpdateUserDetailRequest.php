@@ -25,16 +25,24 @@ class UpdateUserDetailRequest extends FormRequest
         if($this->user()->role_id === 1){
             return [
                 'username' => ['sometimes', 'string', 'max:255'],
-                'email' => ['sometimes', 'string', 'email', 'max:255']
+                'email' => ['sometimes', 'string', 'email', 'max:255'],
+                'newPassword' => ['nullable', 'string', 'min:8'],
+                'newPasswordConfirm' => ['nullable', 'required_with:newPassword', 'string', 'same:newPassword'],
             ];
         }
 
-        return [
+        $rules = [
             'username' => ['sometimes', 'string', 'max:255'],
             'email' => ['sometimes', 'string', 'email', 'max:255'],
-            'newPassword' => ['nullable', 'string', 'min:8'],
-            'newPasswordConfirm' => ['nullable', 'required_with:newPassword', 'string', 'same:newPassword'],
             'currentPassword' => ['required', 'string'],
         ];
+
+        if ($this->has('newPassword')) {
+            $rules['newPassword'] = ['required', 'string', 'min:8'];
+            $rules['newPasswordConfirm'] = ['required', 'string', 'same:newPassword'];
+            $rules['currentPassword'] = ['required', 'string'];
+        }
+
+        return $rules;
     }
 }

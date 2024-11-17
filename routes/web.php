@@ -40,7 +40,7 @@ Route::prefix('/api')->middleware('auth:sanctum')->group(function () {
         Route::put('/product-types/{productType}', [ProductTypeController::class, 'update']);
         Route::delete('/product-types/{productType}', [ProductTypeController::class, 'destroy']);
         
-        Route::put('/user-update/{id}', [UserDetailController::class, 'updateUser']);
+        Route::put('/user-update/{id}', [UserDetailController::class, 'updateAdmin']);
 
     });
 

@@ -394,19 +394,14 @@ export default {
         const handleImageUpload = async (event, product = null) => {
             try {
                 const file = event.target.files[0];
-                if (!validateFileUpload(file)) return;
-
                 const formData = new FormData();
                 formData.append('image', file);
-                formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
-
                 if (product) {
                     const response = await axios.post('/product/upload-image', formData, {
                         headers: {
                         'Content-Type': 'multipart/form-data'
                         }
                     });
-
                     const jsonResponse = response.data.match(/{.*}/s);
                     if (jsonResponse) {
                         const parsedResponse = JSON.parse(jsonResponse[0]);
@@ -418,13 +413,11 @@ export default {
                     const file = event.target.files[0];
                     const formData = new FormData();
                     formData.append('image', file);
-
                     const response = await axios.post('/product/upload-image', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data'
                         }
                     });
-
                     const jsonResponse = response.data.match(/{.*}/s);
                     if (jsonResponse) {
                         const parsedResponse = JSON.parse(jsonResponse[0]);
