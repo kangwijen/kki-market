@@ -106,7 +106,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Upload an image for a product.
+     * Upload for a product.
      */
     public function uploadImage(Request $request)
     {

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('sold')->default(0); 
             $table->integer('discount')->default(0);
             $table->text('description')->nullable(); 
+            $table->text('link')->nullable();
             $table->timestamps();
         });
     }

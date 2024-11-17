@@ -23,6 +23,7 @@ class ProductDetailSeeder extends Seeder
                 'description' => 'Description for Product A',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'link' => 'https://example.com/product-a',
             ],
             [
                 'product_id' => 2,
@@ -33,6 +34,7 @@ class ProductDetailSeeder extends Seeder
                 'description' => 'Description for Product B',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'link' => 'https://example.com/product-b',
             ],
             [
                 'product_id' => 3,
@@ -43,6 +45,7 @@ class ProductDetailSeeder extends Seeder
                 'description' => 'Description for Product C',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'link' => 'https://example.com/product-c',
             ],
         ]);
     }

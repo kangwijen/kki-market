@@ -42,6 +42,9 @@ Route::prefix('/api')->middleware('auth:sanctum')->group(function () {
         
         Route::put('/user-update/{id}', [UserDetailController::class, 'updateAdmin']);
 
+        Route::put('/upload', [ProductDetailController::class, 'uploadFile']);
+        Route::get('/download/{fileId}', [ProductDetailController::class, 'downloadFile']);
+        Route::delete('/delete/{fileId}', [ProductDetailController::class, 'deleteFile']);
     });
 
     Route::get('/product-types', [ProductTypeController::class, 'index']);

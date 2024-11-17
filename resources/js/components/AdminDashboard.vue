@@ -49,6 +49,12 @@
                             </div>
                             <div class="form-control">
                                 <label class="label">
+                                    <span class="label-text">Upload File</span>
+                                </label>
+                                <input type="file" @change="handleFileUpload($event)" class="w-full file-input file-input-bordered" />
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
                                     <span class="label-text">Product Type</span>
                                 </label>
                                 <select v-model="newProduct.product_type_id" class="w-full select select-bordered" required>
@@ -95,6 +101,12 @@
                                             <span class="label-text">Change Image</span>
                                         </label>
                                         <input type="file" @change="handleImageUpload($event, updateProduct)" class="w-full file-input file-input-bordered" />
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Change File</span>
+                                        </label>
+                                        <input type="file" @change="handleFileUpload($event, updateFile)" class="w-full file-input file-input-bordered" />
                                     </div>
                                     <div class="form-control">
                                         <label class="label">
@@ -329,6 +341,58 @@ export default {
             popupShow.value = true;
         };
 
+        const uploadFile = async (file) => {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const response = await axios.post('/upload', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                this.showPopup('Success', 'File uploaded successfully', 'success');
+                return response.data;
+            } catch (error) {
+                this.showPopup('Error', error.response?.data?.error || 'Failed to upload file', 'error');
+                return null;
+            }
+        }
+
+        const downloadFile = async (fileId) => {
+            try {
+                const response = await axios.get(`/download/${fileId}`, {
+                responseType: 'blob'
+                });
+
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'file'); // or extract the file name from response headers
+                document.body.appendChild(link);
+                link.click();
+
+                this.showPopup('Success', 'File downloaded successfully', 'success');
+            } catch (error) {
+                this.showPopup('Error', error.response?.data?.error || 'Failed to download file', 'error');
+            }
+        }
+
+        const deleteFile = async (fileId) => {
+            try {
+                const response = await axios.delete(`/delete/${fileId}`);
+                if (response.data.success) {
+                this.showPopup('Success', 'File deleted successfully', 'success');
+                } else {
+                this.showPopup('Error', 'Failed to delete file', 'error');
+                }
+            } catch (error) {
+                this.showPopup('Error', error.response?.data?.error || 'Failed to delete file', 'error');
+            }
+        }
+
+                
         const fetchProductTypes = async () => {
             try {
                 const response = await axios.get('/product-types');
@@ -431,6 +495,32 @@ export default {
             }
         };
 
+        const handleFileUpload = async (event, product = null) => {
+            try {
+                const file = event.target.files[0];
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const response = await axios.post('/upload', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                const pixeldrainResponse = await axios.put('https://pixeldrain.com/api/file/', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                newProduct.value.product_detail.link = pixeldrainResponse.data.id;
+
+                showPopup('Success', 'File uploaded successfully', 'success');
+            } catch (error) {
+                showPopup('Error', error.response?.data?.error || 'Failed to upload file', 'error');
+            }
+        };
+
         const createProduct = async () => {
             try {
                 if (!validateProductData(newProduct.value)) return;
@@ -485,6 +575,11 @@ export default {
                 showPopup('Error', error.response?.data?.error || 'Failed to update product', 'error');
             }
         };
+
+        const updateFile = async (product) => {
+            // 
+        };
+
 
         const handleProductTypeSelect = () => {
             const selectedType = productTypes.value.find(type => type.id === updateForm.value.id);
