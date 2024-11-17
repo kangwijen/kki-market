@@ -109,6 +109,9 @@ export default {
             return Array.from(categorySet);
         });
 
+        const sanitizeInput = (input) => {
+            return input.replace(/[<>]/g, '').trim();
+        };
 
         const filteredProducts = computed(() => {
             return products.value.filter(product => {
@@ -156,12 +159,19 @@ export default {
         }
 
         const searchProducts = () => {
-            currentPage.value = 1
-        }
+            searchQuery.value = sanitizeInput(searchQuery.value);
+            currentPage.value = 1;
+        };
+
+        const validatePriceRange = () => {
+            minPrice.value = Math.max(0, parseFloat(minPrice.value) || 0);
+            maxPrice.value = Math.max(minPrice.value, parseFloat(maxPrice.value) || 0);
+        };
 
         const filterProducts = () => {
-            currentPage.value = 1
-        }
+            validatePriceRange();
+            currentPage.value = 1;
+        };
 
         const changePage = (page) => {
             currentPage.value = page

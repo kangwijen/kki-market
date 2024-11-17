@@ -233,12 +233,29 @@ export default {
 
             return true;
         };
+
+        const validateUserData = (userData) => {
+            if (!userData.email?.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                showPopup('Error', 'Please enter a valid email address', 'error');
+                return false;
+            }
+            if (!userData.username?.match(/^[a-zA-Z0-9_]{3,20}$/)) {
+                showPopup('Error', 'Username must be 3-20 characters and contain only letters, numbers and underscores', 'error');
+                return false;
+            }
+            return true;
+        };
         
         const updateUser = async (userData) => {
             try {
+                if (!validateUserData(userData)) return;
                 if (!validatePasswords()) return;
 
-                const updateData = { ...userData };
+                const updateData = {
+                    username: userData.username.trim(),
+                    email: userData.email.trim(),
+                    currentPassword: userData.currentPassword
+                };
 
                 await axios.put('/user-details', updateData);
                 showPopup('Success', 'User details updated successfully', 'success');

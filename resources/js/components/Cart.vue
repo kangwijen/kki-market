@@ -210,21 +210,42 @@ export default {
             return new Intl.NumberFormat('en-US', { minimumFractionDigits: 0 }).format(price || 0)
         }
 
-        const updateQuantity = async (item, newQuantity) => {
-            if (newQuantity < 1) {
-                newQuantity = 1;
-            } else if (newQuantity > item.product.product_detail?.stock) {
-                newQuantity = item.product.product_detail.stock;
+        const validateQuantity = (qty, stock) => {
+            const parsedQty = parseInt(qty);
+            if (isNaN(parsedQty) || parsedQty < 1) {
+                showPopup('Error', 'Quantity must be at least 1', 'error');
+                return false;
             }
+            if (parsedQty > stock) {
+                showPopup('Error', 'Quantity cannot exceed available stock', 'error');
+                return false;
+            }
+            return true;
+        };
+
+        const updateQuantity = async (item, newQuantity) => {
+            if (!validateQuantity(newQuantity, item.product.product_detail?.stock)) {
+                return;
+            }
+
             try {
-                await axios.put(`/cart/${item.product_id}`, { quantity: newQuantity }, { withCredentials: true })
-                item.quantity = newQuantity
+                await axios.put(`/cart/${item.product_id}`, 
+                    { quantity: parseInt(newQuantity) }, 
+                    { 
+                        withCredentials: true,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    }
+                );
+                item.quantity = newQuantity;
                 showPopup('Success', 'Quantity updated successfully', 'success')
                 window.dispatchEvent(new Event('cart-updated'));
             } catch (error) {
                 showPopup('Error', error.response?.data?.error || 'Failed to update quantity.', 'error')
             }
-        }
+        };
 
         const removeFromCart = async (item) => {
             try {
@@ -253,30 +274,43 @@ export default {
         }
 
         const processPayment = async () => {
-            checkoutStep.value = 'processing'
-            isProcessing.value = true
+            checkoutStep.value = 'processing';
+            isProcessing.value = true;
 
             try {
+                if (cartItems.value.length === 0) {
+                    throw new Error('Cart is empty');
+                }
+
+                if (userBalance.value < cartTotal.value) {
+                    throw new Error('Insufficient funds');
+                }
+
+                const transactionId = Date.now().toString();
+                
                 const response = await axios.post('/cart/checkout', {
                     items: cartItems.value.map(item => ({
                         product_id: item.product_id,
-                        quantity: item.quantity
-                    }))
-                })
+                        quantity: parseInt(item.quantity)
+                    })),
+                    transaction_id: transactionId
+                }, {
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
 
-                userBalance.value -= cartTotal.value
-
-                cartItems.value = []
-                window.dispatchEvent(new Event('cart-updated'))
-
-                checkoutStep.value = 'success'
+                userBalance.value = parseFloat((userBalance.value - cartTotal.value).toFixed(2));
+                cartItems.value = [];
+                window.dispatchEvent(new Event('cart-updated'));
+                checkoutStep.value = 'success';
             } catch (error) {
-                showPopup('Error', error.response?.data?.error || 'Failed to process payment', 'error')
-                checkoutStep.value = 'confirmation'
+                showPopup('Error', error.response?.data?.error || error.message || 'Failed to process payment', 'error');
+                checkoutStep.value = 'confirmation';
             } finally {
-                isProcessing.value = false
+                isProcessing.value = false;
             }
-        }
+        };
 
         const closeConfirmationModal = () => {
             showConfirmationModal.value = false

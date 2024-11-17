@@ -49,6 +49,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import Popup from './Popup.vue'
+import DOMPurify from 'dompurify';
 
 export default {
     components: { Popup },
@@ -68,16 +69,30 @@ export default {
             popupShow.value = true;
         };
 
+        const sanitizeInput = (input) => {
+            return DOMPurify.sanitize(input.trim());
+        };
+
         const handleSubmit = async () => {
             try {
+                const sanitizedEmail = sanitizeInput(email.value);
                 const response = await axios.post('/login', {
-                    email: email.value,
-                    password: password.value,
+                    email: sanitizedEmail,
+                    password: password.value, // Don't sanitize passwords
                 });
+                
+                if (response.data.token) {
+                    localStorage.setItem('token', response.data.token);
+                }
+                
                 window.dispatchEvent(new Event('login'));
                 router.push('/search');
             } catch (error) {
-                showPopup('Error', error.response?.data?.message || 'Failed to login. Please try again.', 'error');
+                showPopup('Error', 
+                    error.response?.status === 429 ? 'Too many login attempts. Please try again later.' :
+                    error.response?.data?.message || 'Failed to login. Please try again.',
+                    'error'
+                );
             }
         };
 

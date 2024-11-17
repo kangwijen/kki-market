@@ -90,24 +90,47 @@ export default {
             return new Intl.NumberFormat('en-US', { minimumFractionDigits: 0 }).format(price || 0)
         }
 
+        const validateQuantity = (qty, stock) => {
+            const parsedQty = parseInt(qty);
+            if (isNaN(parsedQty) || parsedQty < 1) {
+                showPopup('Error', 'Quantity must be at least 1', 'error');
+                return false;
+            }
+            if (parsedQty > stock) {
+                showPopup('Error', 'Quantity cannot exceed available stock', 'error');
+                return false;
+            }
+            return true;
+        };
+
         const incrementQuantity = () => {
-            if (quantity.value < product.value.product_detail?.stock) {
-                quantity.value++
+            const newQty = quantity.value + 1;
+            if (validateQuantity(newQty, product.value.product_detail?.stock)) {
+                quantity.value = newQty;
             }
         }
 
         const decrementQuantity = () => {
-            if (quantity.value > 1) {
-                quantity.value--
+            const newQty = quantity.value - 1;
+            if (validateQuantity(newQty, product.value.product_detail?.stock)) {
+                quantity.value = newQty;
             }
         }
 
         const addToCart = async () => {
             try {
+                if (!validateQuantity(quantity.value, product.value.product_detail?.stock)) return;
+
                 await axios.post('/cart', {
                     product_id: product.value.id,
-                    quantity: quantity.value
-                }, { withCredentials: true });
+                    quantity: parseInt(quantity.value)
+                }, { 
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
                 showPopup('Success', 'Product added to cart successfully!', 'success')
                 window.dispatchEvent(new Event('cart-updated'));
             } catch (error) {

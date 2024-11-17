@@ -359,9 +359,101 @@ export default {
             }
         };
 
+        const validateProductData = (product) => {
+            if (!product.name?.trim()) {
+                showPopup('Error', 'Product name is required', 'error');
+                return false;
+            }
+            if (isNaN(product.product_detail.price) || product.product_detail.price <= 0) {
+                showPopup('Error', 'Please enter a valid price', 'error');
+                return false;
+            }
+            if (isNaN(product.product_detail.stock) || product.product_detail.stock < 0) {
+                showPopup('Error', 'Please enter a valid stock amount', 'error');
+                return false;
+            }
+            return true;
+        };
+
+        const validateFileUpload = (file) => {
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+            
+            if (!file) return false;
+            if (file.size > maxSize) {
+                showPopup('Error', 'File size must be less than 5MB', 'error');
+                return false;
+            }
+            if (!allowedTypes.includes(file.type)) {
+                showPopup('Error', 'Only JPEG, PNG and WEBP files are allowed', 'error');
+                return false;
+            }
+            return true;
+        };
+
+        const handleImageUpload = async (event, product = null) => {
+            try {
+                const file = event.target.files[0];
+                if (!validateFileUpload(file)) return;
+
+                const formData = new FormData();
+                formData.append('image', file);
+                formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+
+                if (product) {
+                    const response = await axios.post('/product/upload-image', formData, {
+                        headers: {
+                        'Content-Type': 'multipart/form-data'
+                        }
+                    });
+
+                    const jsonResponse = response.data.match(/{.*}/s);
+                    if (jsonResponse) {
+                        const parsedResponse = JSON.parse(jsonResponse[0]);
+                        imageFile.value = parsedResponse.image_path;
+                    } else {
+                        showPopup('Error', 'Failed to upload image', 'error');
+                    }
+                } else {
+                    const file = event.target.files[0];
+                    const formData = new FormData();
+                    formData.append('image', file);
+
+                    const response = await axios.post('/product/upload-image', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+
+                    const jsonResponse = response.data.match(/{.*}/s);
+                    if (jsonResponse) {
+                        const parsedResponse = JSON.parse(jsonResponse[0]);
+                        newProduct.value.img_path = parsedResponse.image_path;
+                    } else {
+                        showPopup('Error', 'Failed to upload image', 'error');
+                    }
+                }
+            } catch (error) {
+                showPopup('Error', error.response?.data?.error || 'Failed to upload image', 'error');
+            }
+        };
+
         const createProduct = async () => {
             try {
-                const response = await axios.post('/product', newProduct.value);
+                if (!validateProductData(newProduct.value)) return;
+
+                const productData = {
+                    name: newProduct.value.name.trim(),
+                    product_detail: {
+                        price: parseFloat(newProduct.value.product_detail.price),
+                        description: newProduct.value.product_detail.description.trim(),
+                        stock: parseInt(newProduct.value.product_detail.stock)
+                    },
+                    img_path: newProduct.value.img_path,
+                    product_type_id: newProduct.value.product_type_id
+                };
+
+                const response = await axios.post('/product', productData);
                 products.value.push(response.data);
                 showPopup('Success', 'Product created successfully', 'success');
                 newProduct.value = {
@@ -426,52 +518,7 @@ export default {
             }
         };
 
-        const handleImageUpload = async (event, product = null) => {
-            try {
-                const file = event.target.files[0];
-                const formData = new FormData();
-                formData.append('image', file);
-
-                if (product) {
-                    const response = await axios.post('/product/upload-image', formData, {
-                        headers: {
-                        'Content-Type': 'multipart/form-data'
-                        }
-                    });
-
-                    const jsonResponse = response.data.match(/{.*}/s);
-                    if (jsonResponse) {
-                        const parsedResponse = JSON.parse(jsonResponse[0]);
-                        imageFile.value = parsedResponse.image_path;
-                    } else {
-                        showPopup('Error', 'Failed to upload image', 'error');
-                    }
-                } else {
-                    const file = event.target.files[0];
-                    const formData = new FormData();
-                    formData.append('image', file);
-
-                    const response = await axios.post('/product/upload-image', formData, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    });
-
-                    const jsonResponse = response.data.match(/{.*}/s);
-                    if (jsonResponse) {
-                        const parsedResponse = JSON.parse(jsonResponse[0]);
-                        newProduct.value.img_path = parsedResponse.image_path;
-                    } else {
-                        showPopup('Error', 'Failed to upload image', 'error');
-                    }
-                }
-            } catch (error) {
-                showPopup('Error', error.response?.data?.error || 'Failed to upload image', 'error');
-            }
-        };
-        
         const updateUser = async (user) => {
-            // showPopup('Update User', 'This feature is not yet implemented', 'info');
             try {
                 if (user.email === '') {
                     showPopup('Error', 'Please enter new email', 'error');
