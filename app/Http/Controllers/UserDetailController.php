@@ -100,6 +100,42 @@ class UserDetailController extends Controller
             ], 500);
         }
     }
+    
+    public function updateUser(UpdateUserDetailRequest $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            
+            $validated = $request->validated();
+            $user = User::findOrFail($id);
+
+            if (isset($validated['email'])) {
+                $user->email = $validated['email'];
+            }
+    
+            if (isset($validated['username'])) {
+                $user->username = $validated['username'];
+            }
+
+            $allowedFields = ['username', 'email'];
+            $validated = array_intersect_key($validated, array_flip($allowedFields));
+            
+            $user->update($validated);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'User details updated successfully',
+                'user' => $user
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'An error occurred while updating user details',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     /**
      * Remove the specified resource from storage.
