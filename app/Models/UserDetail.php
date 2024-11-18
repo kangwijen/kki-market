@@ -11,6 +11,11 @@ class UserDetail extends Model
 
     protected $fillable = ['user_id', 'balance', 'verified'];
 
+    protected $attributes = [
+        'balance' => 0.00,
+        'verified' => false
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

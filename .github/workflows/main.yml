@@ -78,4 +78,11 @@ jobs:
         run: npx eslint resources/ || true
 
       - name: Run PHPUnit
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: kki_db
+          DB_USERNAME: root
+          DB_PASSWORD: mysecret
         run: php artisan test

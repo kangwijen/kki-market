@@ -18,6 +18,7 @@ class RoleFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->word(),
+            'privilege_level' => $this->faker->numberBetween(1, 5)
         ];
     }
 }
