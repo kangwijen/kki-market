@@ -11,8 +11,16 @@ class UpdateUserDetailRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $result = $this->user()->id === $this->request->get('id') || $this->user()->role_id === 1;
-        return $result;
+        $user = $this->user();
+        if (!$user) {
+            return false;
+        }
+
+        if (!$this->route('id')) {
+            return $user->id === $this->user()->id;
+        }
+
+        return $user->role_id === 1;
     }
 
     /**
@@ -24,25 +32,28 @@ class UpdateUserDetailRequest extends FormRequest
     {
         if($this->user()->role_id === 1){
             return [
-                'username' => ['sometimes', 'string', 'max:255'],
-                'email' => ['sometimes', 'string', 'email', 'max:255'],
-                'newPassword' => ['nullable', 'string', 'min:8'],
+                'username' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9_-]+$/', 'not_regex:/[<>{}[\]\/]/'],
+                'email' => ['sometimes', 'string', 'email:rfc,dns', 'max:255'],
+                'newPassword' => ['nullable', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/'],
                 'newPasswordConfirm' => ['nullable', 'required_with:newPassword', 'string', 'same:newPassword'],
             ];
         }
 
-        $rules = [
-            'username' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'string', 'email', 'max:255'],
+        return [
+            'username' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9_-]+$/', 'not_regex:/[<>{}[\]\/]/'],
+            'email' => ['sometimes', 'string', 'email:rfc,dns', 'max:255'],
             'currentPassword' => ['required', 'string'],
+            'newPassword' => ['sometimes', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/'],
+            'newPasswordConfirm' => ['sometimes', 'required_with:newPassword', 'string', 'same:newPassword'],
         ];
+    }
 
-        if ($this->has('newPassword')) {
-            $rules['newPassword'] = ['required', 'string', 'min:8'];
-            $rules['newPasswordConfirm'] = ['required', 'string', 'same:newPassword'];
-            $rules['currentPassword'] = ['required', 'string'];
-        }
-
-        return $rules;
+    public function messages()
+    {
+        return [
+            'username.regex' => 'Username can only contain letters, numbers, underscores, and hyphens.',
+            'username.not_regex' => 'Username contains invalid characters.',
+            'newPassword.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
+        ];
     }
 }

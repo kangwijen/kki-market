@@ -22,7 +22,16 @@ class UserSeeder extends Seeder
                 'role_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
+            [
+                'username' => 'user',
+                'email'=> 'user@kki.market',
+                'email_verified_at' => now(),
+                'password'=> bcrypt('user@kki.market'),
+                'role_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

@@ -62,7 +62,7 @@ jobs:
           DB_DATABASE: kki_db
           DB_USERNAME: root
           DB_PASSWORD: mysecret
-        run: php artisan migrate --force
+        run: php artisan migrate:fresh --seed
 
       - name: Run PHPStan
         env:
@@ -76,3 +76,6 @@ jobs:
 
       - name: Run ESLint for Vue.js
         run: npx eslint resources/ || true
+
+      - name: Run PHPUnit
+        run: php artisan test

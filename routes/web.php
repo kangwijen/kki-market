@@ -8,15 +8,15 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\TransactionDetailController;
 use App\Http\Controllers\TransactionHeaderController;
 use App\Http\Controllers\UserDetailController;
-use App\Models\TransactionDetail;
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [RegisterController::class, 'register']);
+Route::middleware('throttle:5,1')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [RegisterController::class, 'register']);
+});
 
-Route::prefix('/api')->middleware('auth:sanctum')->group(function () {
+Route::prefix('/api')->middleware(['auth:sanctum', 'throttle:5,1'])->group(function () {
     Route::get('/user-details', [AuthController::class, 'user']);
     Route::get('/user-details/all', [UserDetailController::class, 'index']);
     Route::get('/user-details/balance', [UserDetailController::class, 'balance']);
@@ -24,7 +24,6 @@ Route::prefix('/api')->middleware('auth:sanctum')->group(function () {
     Route::post('/user-details/purchase-credits', [UserDetailController::class, 'purchaseCredits']);
     Route::put('/user-details', [UserDetailController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    
     
     Route::get('/products', [ProductController::class, 'index']);
     Route::get('/product/{id}', [ProductController::class, 'show']);

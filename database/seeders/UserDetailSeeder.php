@@ -21,6 +21,13 @@ class UserDetailSeeder extends Seeder
                 "created_at" => now(),
                 "updated_at" => now(),
             ],
+            [
+                'user_id' => 2,
+                'balance' => 1000.00,
+                'verified' => true,
+                "created_at" => now(),
+                "updated_at" => now(),
+            ],
         ]);
     }
 }
