@@ -11,12 +11,12 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TransactionHeaderController;
 use App\Http\Controllers\UserDetailController;
 
-Route::middleware('throttle:5,1')->group(function () {
+Route::middleware('throttle:30,1')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [RegisterController::class, 'register']);
 });
 
-Route::prefix('/api')->middleware(['auth:sanctum', 'throttle:5,1'])->group(function () {
+Route::prefix('/api')->middleware(['auth:sanctum', 'throttle:30,1'])->group(function () {
     Route::get('/user-details', [AuthController::class, 'user']);
     Route::get('/user-details/all', [UserDetailController::class, 'index']);
     Route::get('/user-details/balance', [UserDetailController::class, 'balance']);

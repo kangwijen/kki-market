@@ -38,11 +38,6 @@ class User extends Authenticatable
 
     public function transactionsAsBuyer()
     {
-        return $this->hasMany(TransactionHeader::class, 'buyer_id');
-    }
-
-    public function transactionsAsSeller()
-    {
-        return $this->hasMany(TransactionHeader::class, 'seller_id');
+        return $this->hasMany(TransactionHeader::class, 'user_id');
     }
 }

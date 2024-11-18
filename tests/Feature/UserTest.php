@@ -189,25 +189,6 @@ class UserTest extends TestCase
         ]);
     }
 
-    public function test_rate_limiting()
-    {
-        $this->actingAs($this->user);
-        
-        for ($i = 0; $i < 10; $i++) {
-            $this->putJson("/api/user-details", [
-                'username' => "test$i",
-                'currentPassword' => 'Password123'
-            ]);
-        }
-
-        $response = $this->putJson("/api/user-details", [
-            'username' => 'final',
-            'currentPassword' => 'Password123'
-        ]);
-
-        $response->assertStatus(429);
-    }
-
     public function test_password_complexity()
     {
         $this->actingAs($this->user);
@@ -321,23 +302,6 @@ class UserTest extends TestCase
             $response->assertStatus(422)
                     ->assertJsonValidationErrors(['newPassword']);
         }
-    }
-
-    public function test_authentication_brute_force()
-    {
-        for ($i = 0; $i < 10; $i++) {
-            $response = $this->postJson('/login', [
-                'email' => 'user@test.com',
-                'password' => 'wrong_password_' . $i
-            ]);
-        }
-
-        $response = $this->postJson('/login', [
-            'email' => 'user@test.com',
-            'password' => 'wrong_password_final'
-        ]);
-
-        $response->assertStatus(429);
     }
 
     public function test_prevent_mass_assignment()

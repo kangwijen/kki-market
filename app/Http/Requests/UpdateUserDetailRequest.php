@@ -33,7 +33,7 @@ class UpdateUserDetailRequest extends FormRequest
         if($this->user()->role_id === 1){
             return [
                 'username' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9_-]+$/', 'not_regex:/[<>{}[\]\/]/'],
-                'email' => ['sometimes', 'string', 'email:rfc,dns', 'max:255'],
+                'email' => ['sometimes', 'string', 'email:rfc', 'max:255'],
                 'newPassword' => ['nullable', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/'],
                 'newPasswordConfirm' => ['nullable', 'required_with:newPassword', 'string', 'same:newPassword'],
             ];
@@ -41,7 +41,7 @@ class UpdateUserDetailRequest extends FormRequest
 
         return [
             'username' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9_-]+$/', 'not_regex:/[<>{}[\]\/]/'],
-            'email' => ['sometimes', 'string', 'email:rfc,dns', 'max:255'],
+            'email' => ['sometimes', 'string', 'email:rfc', 'max:255'],
             'currentPassword' => ['required', 'string'],
             'newPassword' => ['sometimes', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/'],
             'newPasswordConfirm' => ['sometimes', 'required_with:newPassword', 'string', 'same:newPassword'],
