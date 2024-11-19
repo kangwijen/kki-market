@@ -9,8 +9,7 @@ class Cart extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = ['user_id', 'product_id'];
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = [
         'user_id',

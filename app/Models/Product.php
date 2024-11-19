@@ -20,7 +20,7 @@ class Product extends Model
 
     public function productDetail()
     {
-        return $this->hasOne(ProductDetail::class);
+        return $this->hasOne(ProductDetail::class, 'product_id');
     }
 
     public function transactionDetails()

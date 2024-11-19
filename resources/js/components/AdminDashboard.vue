@@ -507,7 +507,16 @@ export default {
                 showPopup('Success', 'Product type updated successfully', 'success');
                 updateForm.value = { id: '', name: '' };
             } catch (error) {
-                showPopup('Error', error.response?.data?.error || 'Failed to update product type', 'error');
+                const errors = error.response?.data?.errors;
+
+                let errorMessage = 'Failed to update password';
+                if (errors) {
+                    errorMessage = Object.values(errors)
+                        .flat() 
+                        .join('\n'); 
+                }
+
+                showPopup('Error', errorMessage, 'error');
             }
         };
 

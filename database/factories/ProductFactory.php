@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ProductType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,11 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->word(),
+            'img_path' => $this->faker->imageUrl(),
+            'product_type_id' => ProductType::factory(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }

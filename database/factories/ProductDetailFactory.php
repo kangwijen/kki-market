@@ -17,7 +17,11 @@ class ProductDetailFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'price' => $this->faker->numberBetween(1000, 100000),
+            'stock' => $this->faker->numberBetween(1, 100),
+            'sold' => 0,
+            'discount' => $this->faker->numberBetween(0, 50),
+            'description' => $this->faker->text(),
         ];
     }
 }

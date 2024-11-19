@@ -10,6 +10,9 @@ class ProductDetail extends Model
     use HasFactory;
 
     protected $primaryKey = 'product_id';
+    public $incrementing = false;
+    protected $keyType = 'int';
+
     protected $fillable = ['product_id', 'price', 'stock', 'sold', 'description'];
 
     protected $casts = [
