@@ -12,6 +12,7 @@ Single-page E-commerce web application built with Laravel and Vue.js, using Tail
 - Routing: Vue Router
 - UI: Tailwind CSS 3, DaisyUI, typed.js
 - HTTP Requests: Axios
+- Security: DOMPurify
 - Dev tools: Node 20.11, Vite, ESLint
 
 ## Installation
