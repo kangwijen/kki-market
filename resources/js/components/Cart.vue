@@ -1,100 +1,113 @@
 <template>
-    <div class="min-h-screen p-8 bg-base-300">
-        <div class="flex items-center mb-4">
-                <a @click="$router.back()" class="items-center justify-center rounded-full btn btn-secondary">⮜</a>
-                <h1 class="ml-5 text-3xl font-bold">Your Cart</h1>
-        </div>
-
-        <div v-if="cartItems.length === 0" class="grid gap-8 md:grid-cols-3">
-                <div class="mt-4 md:col-span-2">Your cart is empty. Add items to your cart to see them displayed here. </div>
-                <div class="p-6 space-y-6 shadow-xl card bg-base-100">
-                <div>
-                    <h2 class="mb-4 text-2xl font-semibold">Order Summary</h2>
-                    <div class="space-y-2">
-                        <div class="flex justify-between">
-                            <span>Subtotal:</span>
-                            <span>${{ formatPrice(cartTotal) }}</span>
-                        </div>
-                        <div class="flex justify-between font-bold">
-                            <span>Total:</span>
-                            <span>${{ formatPrice(cartTotal) }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t">
-                    <div class="flex justify-between mb-2">
-                        <span class="font-semibold">Your Balance:</span>
-                        <span class="font-semibold" :class="{'text-error': insufficientFunds}">${{ formatPrice(userBalance) }}</span>
-                    </div>
-                    <div v-if="insufficientFunds" class="mb-4 text-sm text-error">
-                        Insufficient balance. Please <router-link to="/profile" class="text-primary">top up</router-link> your account.
-                    </div>
-                </div>
-
-                <button 
-                    class="w-full btn btn-primary" 
-                    @click="initiateCheckout"
-                    :disabled="isProcessing || cartItems.length === 0 || insufficientFunds"
-                >
-                    {{ isProcessing ? 'Processing...' : 'Purchase Now' }}
-                </button>
+    <div class="min-h-screen bg-base-100">
+        <div class="navbar bg-base-300">
+            <div class="flex-1">
+                <a @click="$router.back()" class="btn btn-circle btn-ghost">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                <h1 class="text-3xl font-bold">Your Cart</h1>
             </div>
         </div>
 
-        <div v-else class="grid gap-8 md:grid-cols-3">
-            <div class="md:col-span-2">
-                <div v-for="item in cartItems" :key="item.id" class="mb-4 shadow-xl card bg-base-100">
-                    <div class="card-body">
-                        <div class="flex items-center space-x-4">
-                            <img :src="'/storage/' + item.product.img_path" :alt="item.product.name" class="object-cover w-24 h-24 rounded-md">
-                            <div>
-                                <button class="card-title" @click="goToProductDetails(item.product.id)">{{ item.product.name }}</button>
-                                <p>Price: ${{ formatPrice(item.product.product_detail?.price) }}</p>
-                                <div class="flex items-center mt-2 space-x-2">
-                                    <button class="btn btn-square btn-sm" @click="updateQuantity(item, item.quantity - 1)">-</button>
-                                    <input type="number" v-model.number="item.quantity" class="w-16 input input-bordered" min="1" :max="item.product.product_detail?.stock" @change="updateQuantity(item, item.quantity)" />
-                                    <button class="btn btn-square btn-sm" @click="updateQuantity(item, item.quantity + 1)">+</button>
-                                </div>
+        <div class="p-4">
+            <div v-if="cartItems.length === 0" class="grid gap-8 md:grid-cols-3">
+                <div class="p-8 text-center md:col-span-2 card bg-base-200">
+                    <h3 class="text-xl">Your cart is empty</h3>
+                    <p class="mt-2 text-base-content/70">Add items to your cart to see them displayed here.</p>
+                    <router-link to="/search" class="mt-4 btn btn-primary">Browse Products</router-link>
+                </div>
+                <div class="p-6 space-y-6 shadow-xl card bg-base-100">
+                    <div>
+                        <h2 class="mb-4 text-2xl font-semibold">Order Summary</h2>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Subtotal:</span>
+                                <span>${{ formatPrice(cartTotal) }}</span>
+                            </div>
+                            <div class="flex justify-between font-bold">
+                                <span>Total:</span>
+                                <span>${{ formatPrice(cartTotal) }}</span>
                             </div>
                         </div>
-                        <button class="mt-4 btn btn-error btn-sm" @click="removeFromCart(item)">Remove</button>
                     </div>
+
+                    <div class="pt-4 border-t">
+                        <div class="flex justify-between mb-2">
+                            <span class="font-semibold">Your Balance:</span>
+                            <span class="font-semibold" :class="{'text-error': insufficientFunds}">${{ formatPrice(userBalance) }}</span>
+                        </div>
+                        <div v-if="insufficientFunds" class="mb-4 text-sm text-error">
+                            Insufficient balance. Please <router-link to="/profile" class="text-primary">top up</router-link> your account.
+                        </div>
+                    </div>
+
+                    <button 
+                        class="w-full btn btn-primary" 
+                        @click="initiateCheckout"
+                        :disabled="isProcessing || cartItems.length === 0 || insufficientFunds"
+                    >
+                        {{ isProcessing ? 'Processing...' : 'Purchase Now' }}
+                    </button>
                 </div>
             </div>
-            
-            <div class="p-6 space-y-6 shadow-xl card bg-base-100">
-                <div>
-                    <h2 class="mb-4 text-2xl font-semibold">Order Summary</h2>
-                    <div class="space-y-2">
-                        <div class="flex justify-between">
-                            <span>Subtotal:</span>
-                            <span>${{ formatPrice(cartTotal) }}</span>
-                        </div>
-                        <div class="flex justify-between font-bold">
-                            <span>Total:</span>
-                            <span>${{ formatPrice(cartTotal) }}</span>
+
+            <div v-else class="grid gap-8 md:grid-cols-3">
+                <div class="space-y-4 md:col-span-2">
+                    <div v-for="item in cartItems" :key="item.id" 
+                        class="transition-all duration-300 shadow-lg card bg-base-200 hover:shadow-xl">
+                        <div class="card-body">
+                            <div class="flex items-center space-x-4">
+                                <img :src="'/storage/' + item.product.img_path" :alt="item.product.name" class="object-cover w-24 h-24 rounded-md">
+                                <div>
+                                    <button class="card-title" @click="goToProductDetails(item.product.id)">{{ item.product.name }}</button>
+                                    <p>Price: ${{ formatPrice(item.product.product_detail?.price) }}</p>
+                                    <div class="flex items-center mt-2 space-x-2">
+                                        <button class="btn btn-square btn-sm" @click="updateQuantity(item, item.quantity - 1)">-</button>
+                                        <input type="number" v-model.number="item.quantity" class="w-16 input input-bordered" min="1" :max="item.product.product_detail?.stock" @change="updateQuantity(item, item.quantity)" />
+                                        <button class="btn btn-square btn-sm" @click="updateQuantity(item, item.quantity + 1)">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="mt-4 btn btn-error btn-sm" @click="removeFromCart(item)">Remove</button>
                         </div>
                     </div>
                 </div>
+                
+                <div class="p-6 space-y-6 shadow-xl card bg-base-100">
+                    <div>
+                        <h2 class="mb-4 text-2xl font-semibold">Order Summary</h2>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Subtotal:</span>
+                                <span>${{ formatPrice(cartTotal) }}</span>
+                            </div>
+                            <div class="flex justify-between font-bold">
+                                <span>Total:</span>
+                                <span>${{ formatPrice(cartTotal) }}</span>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="pt-4 border-t">
-                    <div class="flex justify-between mb-2">
-                        <span class="font-semibold">Your Balance:</span>
-                        <span class="font-semibold" :class="{'text-error': insufficientFunds}">${{ formatPrice(userBalance) }}</span>
+                    <div class="pt-4 border-t">
+                        <div class="flex justify-between mb-2">
+                            <span class="font-semibold">Your Balance:</span>
+                            <span class="font-semibold" :class="{'text-error': insufficientFunds}">${{ formatPrice(userBalance) }}</span>
+                        </div>
+                        <div v-if="insufficientFunds" class="mb-4 text-sm text-error">
+                            Insufficient balance. Please <router-link to="/profile" class="text-primary">top up</router-link> your account.
+                        </div>
                     </div>
-                    <div v-if="insufficientFunds" class="mb-4 text-sm text-error">
-                        Insufficient balance. Please <router-link to="/profile" class="text-primary">top up</router-link> your account.
-                    </div>
+
+                    <button 
+                        class="w-full btn btn-primary" 
+                        @click="initiateCheckout"
+                        :disabled="isProcessing || cartItems.length === 0 || insufficientFunds"
+                    >
+                        {{ isProcessing ? 'Processing...' : 'Purchase Now' }}
+                    </button>
                 </div>
-
-                <button 
-                    class="w-full btn btn-primary" 
-                    @click="initiateCheckout"
-                    :disabled="isProcessing || cartItems.length === 0 || insufficientFunds"
-                >
-                    {{ isProcessing ? 'Processing...' : 'Purchase Now' }}
-                </button>
             </div>
         </div>
 
@@ -157,6 +170,9 @@
                     </button>
                 </div>
             </div>
+            <form method="dialog" class="modal-backdrop">
+                <button>close</button>
+            </form>
         </dialog>
 
         <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />

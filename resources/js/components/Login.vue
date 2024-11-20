@@ -1,44 +1,37 @@
 <template>
-    <div class="flex items-center justify-center min-h-screen p-4 bg-base-300">
-        <div class="w-full max-w-md p-6 space-y-6 rounded-lg shadow-lg sm:p-8 bg-base-100">
-            <h1 class="text-3xl font-bold text-center sm:text-4xl text-primary">Login</h1>
-            <form @submit.prevent="handleSubmit" class="space-y-4 sm:space-y-6">
-                <div class="form-control">
-                    <label for="email" class="label">
-                    <span class="label-text">Email</span>
-                    </label>
-                    <input
-                    type="email"
-                    id="email"
-                    v-model="email"
-                    placeholder="Email"
-                    class="w-full input input-bordered"
-                    required
-                    />
+    <div class="min-h-screen hero bg-base-200">
+        <div class="flex-col w-full max-w-md hero-content">
+            <div class="w-full shadow-2xl card bg-base-100">
+                <div class="card-body">
+                    <h1 class="justify-center text-3xl card-title">Login</h1>
+                    <form @submit.prevent="handleSubmit">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Email</span>
+                            </label>
+                            <input type="email" v-model="email" placeholder="Email" 
+                                   class="input input-bordered" required />
+                        </div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Password</span>
+                            </label>
+                            <input type="password" v-model="password" placeholder="Password" 
+                                   class="input input-bordered" required />
+                        </div>
+                        <div class="mt-6 form-control">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                        <div class="mt-4 form-control">
+                            <label class="justify-center label">
+                                <span class="label-text-alt">No account?
+                                    <router-link to="/register" class="link link-primary">Create one here</router-link>
+                                </span>
+                            </label>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-control">
-                    <label for="password" class="label">
-                    <span class="label-text">Password</span>
-                    </label>
-                    <input
-                    type="password"
-                    id="password"
-                    v-model="password"
-                    placeholder="Password"
-                    class="w-full input input-bordered"
-                    required
-                    />
-                </div>
-                <div class="text-center">
-                    <p class="text-sm">
-                    No account?
-                    <router-link to="/register" class="text-primary hover:underline">Create one here</router-link>.
-                    </p>
-                </div>
-                <div class="mt-6 form-control">
-                    <button type="submit" class="w-full btn btn-primary">Login</button>
-                </div>
-            </form>
+            </div>
         </div>
         <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
     </div>

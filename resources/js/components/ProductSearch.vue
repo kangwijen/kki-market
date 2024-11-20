@@ -1,76 +1,136 @@
 <template>
-    <div class="min-h-screen p-4 sm:p-8 bg-base-300">
-        <div class="flex items-center mb-4">
-            <a @click="$router.back()" class="items-center justify-center rounded-full btn btn-secondary">⮜</a>
-            <h1 class="ml-5 text-3xl font-bold">Products</h1>
-        </div>
-        <div class="mb-6 space-y-2">
-            <label for="search" class="block mb-2 text-lg font-bold">Search for products:</label>
-            <input v-model="searchQuery" type="text" id="search" placeholder="Type here..." class="w-full input input-bordered input-primary" @input="searchProducts" />
+    <div class="min-h-screen bg-base-100">
+        <div class="navbar bg-base-300">
+            <div class="flex-1">
+                <a @click="$router.back()" class="btn btn-circle btn-ghost">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                <h1 class="text-3xl font-bold">Products</h1>
+            </div>
         </div>
         
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
-            <div class="p-4 rounded-lg shadow lg:col-span-1 bg-base-200">
-                <h3 class="mb-4 text-lg font-bold">Filter by</h3>
-                <div class="mb-4">
-                    <label class="block mb-2 font-bold">Category</label>
-                    <select v-model="selectedCategory" class="w-full select select-bordered" @change="filterProducts">
-                        <option value="">All Categories</option>
-                        <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label class="block mb-2 font-bold">Price Range</label>
-                    <div class="flex items-center justify-between">
-                        $<input v-model="minPrice" type="number" min="0" max="200" class="input input-bordered" @input="filterProducts" />
-                        <span class="mx-2">to</span>
-                        $<input v-model="maxPrice" type="number" min="0" max="200" class="input input-bordered" @input="filterProducts" />
+        <div class="p-4">
+            <div class="mb-6 space-y-2 ">
+                <label for="search" class="block mb-2 text-lg font-bold">Search for products:</label>
+                <input v-model="searchQuery" type="text" id="search" placeholder="Type here..." class="w-full input input-bordered input-primary" @input="searchProducts" />
+            </div>
+            
+            <!-- Mobile Filter Drawer -->
+            <div class="lg:hidden">
+                <button class="mb-4 btn btn-primary" onclick="my_modal_3.showModal()">Show Filters</button>
+                <dialog id="my_modal_3" class="modal">
+                    <form method="dialog" class="modal-box">
+                        <button class="absolute btn btn-sm btn-circle btn-ghost right-2 top-2">✕</button>
+                        <div class="card-body">
+                            <h3 class="card-title">Filter by</h3>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="font-bold label-text">Category</span>
+                                </label>
+                                <select v-model="selectedCategory" class="w-full select select-primary" @change="filterProducts">
+                                    <option value="">All Categories</option>
+                                    <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
+                                </select>
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="font-bold label-text">Price Range</span>
+                                </label>
+                                <div class="flex items-center gap-2">
+                                    <div class="join">
+                                        <span class="join-item btn btn-sm">$</span>
+                                        <input v-model="minPrice" type="number" min="0" max="200" class="w-24 join-item input input-bordered input-sm" @input="filterProducts" />
+                                    </div>
+                                    <span>to</span>
+                                    <div class="join">
+                                        <span class="join-item btn btn-sm">$</span>
+                                        <input v-model="maxPrice" type="number" min="0" max="200" class="w-24 join-item input input-bordered input-sm" @input="filterProducts" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </dialog>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
+                <div class="hidden lg:block card bg-base-200">
+                    <div class="card-body">
+                        <h3 class="card-title">Filter by</h3>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="font-bold label-text">Category</span>
+                            </label>
+                            <select v-model="selectedCategory" class="w-full select select-primary" @change="filterProducts">
+                                <option value="">All Categories</option>
+                                <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
+                            </select>
+                        </div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="font-bold label-text">Price Range</span>
+                            </label>
+                            <div class="flex items-center gap-2">
+                                <div class="join">
+                                    <span class="join-item btn btn-sm">$</span>
+                                    <input v-model="minPrice" type="number" min="0" max="200" class="w-24 join-item input input-bordered input-sm" @input="filterProducts" />
+                                </div>
+                                <span>to</span>
+                                <div class="join">
+                                    <span class="join-item btn btn-sm">$</span>
+                                    <input v-model="maxPrice" type="number" min="0" max="200" class="w-24 join-item input input-bordered input-sm" @input="filterProducts" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        
-            <div class="lg:col-span-3">
-                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    <div v-for="product in filteredProducts" :key="product.id" class="relative overflow-hidden transition-transform rounded-lg shadow-lg card hover:scale-105">
-                        <figure class="relative">
-                            <img :src="'/storage/' + product.img_path" :alt="product.name" class="object-cover w-full h-48 rounded-t-lg" />
-                            
-                            <div v-if="!product.product_detail?.stock" class="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-60">
-                                <span class="px-4 py-2 text-lg font-semibold text-white bg-red-500 rounded">Sold Out</span>
-                            </div>
-                            
-                            <span class="absolute px-3 py-1 font-bold text-white rounded-full text-s top-2 right-2 bg-primary">
-                                Sold: {{ product.product_detail?.sold ?? 'N/A' }}
-                            </span>
-                        </figure>
-
-                        <div class="p-4 card-body">
-                            <h3 class="text-lg font-semibold text-white card-title">{{ product.name }}</h3>
-                            
-                            <div class="flex items-center justify-between mt-2">
-                                <p class="text-xl font-bold text-primary">${{ product.product_detail?.price ?? 'N/A' }}</p>
-                            </div>
-
-                            <div v-if="product.product_detail?.stock > 0" class="flex mt-4 space-x-2">
-                                <button @click="goToProductDetails(product.id)" class="flex-1 transition btn btn-outline btn-secondary hover:bg-secondary hover:text-white">
-                                    Details
-                                </button>
-                                <button @click="addToCart(product)" class="flex-1 transition btn btn-primary hover:bg-primary-dark">
-                                    Add to Cart
-                                </button>
+            
+                <div class="lg:col-span-3">
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        <div v-for="product in filteredProducts" :key="product.id" 
+                            class="transition-all duration-300 card bg-base-100 hover:shadow-xl hover:-translate-y-1">
+                            <figure class="relative">
+                                <img :src="'/storage/' + product.img_path" :alt="product.name" class="object-cover w-full h-48 rounded-t-lg" />
+                                
+                                <div v-if="!product.product_detail?.stock" class="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-60">
+                                    <span class="px-4 py-2 text-lg font-semibold text-white bg-red-500 rounded">Sold Out</span>
+                                </div>
+                                
+                                <span class="absolute px-3 py-1 font-bold text-white rounded-full text-s top-2 right-2 bg-primary">
+                                    Sold: {{ product.product_detail?.sold ?? 'N/A' }}
+                                </span>
+                            </figure>
+    
+                            <div class="p-4 card-body">
+                                <h3 class="text-lg font-semibold text-white card-title">{{ product.name }}</h3>
+                                
+                                <div class="flex items-center justify-between mt-2">
+                                    <p class="text-xl font-bold text-primary">${{ product.product_detail?.price ?? 'N/A' }}</p>
+                                </div>
+    
+                                <div v-if="product.product_detail?.stock > 0" class="flex mt-4 space-x-2">
+                                    <button @click="goToProductDetails(product.id)" class="flex-1 transition btn btn-outline btn-secondary hover:bg-secondary hover:text-white">
+                                        Details
+                                    </button>
+                                    <button @click="addToCart(product)" class="flex-1 transition btn btn-primary hover:bg-primary-dark">
+                                        Add to Cart
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="flex justify-center mt-8">
-            <div class="join">
-                <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="['join-item btn', { 'btn-active': currentPage === page }]">{{ page }}</button>
+    
+            <div class="flex justify-center mt-8">
+                <div class="join">
+                    <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="['join-item btn', { 'btn-active': currentPage === page }]">{{ page }}</button>
+                </div>
             </div>
+            <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
         </div>
-        <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
     </div>
 </template>
 

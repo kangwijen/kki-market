@@ -1,19 +1,16 @@
 <template>
-    <div class="min-h-screen hero bg-base-300">
-      <div class="flex flex-col items-center justify-center text-center hero-content sm:flex-row">
-        <div class="max-w-md px-4">
-            <h1 class="text-4xl font-extrabold">
-                <span id="typewriter"></span>Malwares.
-                <span class="block">Get Money.</span>
-            </h1>
-            
-            <p class="py-6 text-lg sm:text-xl">
-                Best marketplace to trade malwares. We provide a secure platform to buy and sell malwares.
-            </p>
-            <router-link v-if="isAuthenticated" to="/search" class="btn btn-primary">Go to Products</router-link>
-            <router-link v-else to="/register" class="btn btn-primary">Get Started</router-link>
+    <div class="min-h-screen hero bg-base-200">
+        <div class="text-center hero-content">
+            <div class="max-w-md">
+                <h1 class="text-5xl font-bold">
+                    <span id="typewriter"></span>Malwares.
+                    <span class="block">Get Money.</span>
+                </h1>
+                <p class="py-6">Best marketplace to trade malwares. We provide a secure platform to buy and sell malwares.</p>
+                <router-link v-if="isAuthenticated" to="/search" class="btn btn-primary btn-wide">Go to Products</router-link>
+                <router-link v-else to="/register" class="btn btn-primary btn-wide">Get Started</router-link>
+            </div>
         </div>
-      </div>
     </div>
 </template>
 

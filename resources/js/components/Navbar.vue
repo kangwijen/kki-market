@@ -1,56 +1,55 @@
 <template>
-    <nav class="navbar bg-base-100">
+    <nav class="shadow-lg navbar bg-base-200">
         <div class="flex-1">
-            <router-link v-if="isAuthenticated" to="/search" class="m-4 text-xl font-bold">KKI-Market</router-link>
-            <router-link v-else to="/" class="m-4 text-xl font-bold">KKI-Market</router-link>
+            <router-link v-if="isAuthenticated" to="/search" class="text-xl font-bold normal-case btn btn-ghost">KKI-Market</router-link>
+            <router-link v-else to="/" class="text-xl font-bold normal-case btn btn-ghost">KKI-Market</router-link>
         </div>
 
-        <div class="flex-none lg:hidden">
-            <button @click="toggleMenu" class="btn btn-ghost">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                </svg>
-            </button>
-        </div>
-
-        <div class="flex-none hidden lg:flex" v-if="!isAuthenticated">
-            <router-link to="/login" class="btn btn-primary">Login</router-link>
-        </div>
-
-        <div class="items-center hidden space-x-4 lg:flex" v-if="isAuthenticated">
-            <router-link to="/cart" class="btn btn-neutral">
-                Cart
-                <span class="ml-1 badge badge-secondary" id="cart-count">{{ cartCount }}</span>
-            </router-link>
-            <div v-if="isAdmin">
-                <button class="btn btn-secondary" @click="admin">Dashboard</button>
-            </div>
-            <button class="btn btn-secondary" @click="user">Profile</button>
-            <button class="btn btn-secondary" @click="logout">Logout</button>
-        </div>
-
-        <div v-if="isMenuOpen" class="absolute right-0 z-50 w-full p-4 space-y-2 rounded-lg shadow-lg top-16 bg-base-100 lg:hidden">
-            <div v-if="!isAuthenticated" class="p-2">
-                <router-link to="/login" class="block w-full py-2 font-semibold text-center rounded-md text-primary hover:bg-gray-200">Login</router-link>
-            </div>
-            
-            <div v-if="isAuthenticated" class="flex flex-col space-y-2">
-                <router-link to="/cart" class="flex items-center justify-between w-full px-4 py-2 space-x-2 rounded-md">
-                    <span class="text-yellow-400">Cart</span>
-                    <span class="badge badge-secondary" id="cart-count">{{ cartCount }}</span>
-                </router-link>
+        <div class="flex-none">
+            <div class="hidden lg:flex lg:items-center lg:gap-2">
+                <div v-if="!isAuthenticated">
+                    <router-link to="/login" class="btn btn-primary">Login</router-link>
+                </div>
                 
-                <button v-if="isAdmin" @click="admin" class="w-full px-4 py-2 text-left text-green-400 rounded-md">
-                    Dashboard
-                </button>
-                
-                <button @click="user" class="w-full px-4 py-2 text-left text-green-400 rounded-md">
-                    Profile
-                </button>
+                <div v-if="isAuthenticated" class="flex items-center gap-2">
+                    <router-link to="/cart" class="btn btn-ghost">
+                        Cart
+                        <div class="badge badge-primary">{{ cartCount }}</div>
+                    </router-link>
+                    <div v-if="isAdmin">
+                        <button class="btn btn-ghost" @click="admin">Dashboard</button>
+                    </div>
+                    <button class="btn btn-ghost" @click="user">Profile</button>
+                    <button class="btn btn-error btn-outline" @click="logout">Logout</button>
+                </div>
+            </div>
 
-                <button @click="logout" class="w-full px-4 py-2 text-left text-red-400 rounded-md">
-                    Logout
+            <div class="dropdown dropdown-end lg:hidden">
+                <button @click="toggleMenu" class="btn btn-ghost">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
                 </button>
+                <ul v-if="isMenuOpen" class="p-2 mt-3 shadow menu dropdown-content bg-base-100 rounded-box w-52">
+                    <li v-if="!isAuthenticated">
+                        <router-link to="/login" class="block w-full py-2 font-semibold text-center rounded-md text-primary hover:bg-gray-200">Login</router-link>
+                    </li>
+                    <li v-if="isAuthenticated">
+                        <router-link to="/cart" class="flex items-center justify-between w-full px-4 py-2 space-x-2 rounded-md">
+                            <span class="text-yellow-400">Cart</span>
+                            <span class="badge badge-secondary" id="cart-count">{{ cartCount }}</span>
+                        </router-link>
+                        <button v-if="isAdmin" @click="admin" class="w-full px-4 py-2 text-left text-green-400 rounded-md">
+                            Dashboard
+                        </button>
+                        <button @click="user" class="w-full px-4 py-2 text-left text-green-400 rounded-md">
+                            Profile
+                        </button>
+                        <button @click="logout" class="w-full px-4 py-2 text-left text-red-400 rounded-md">
+                            Logout
+                        </button>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>

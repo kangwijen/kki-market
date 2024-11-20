@@ -1,54 +1,63 @@
 <template>
-    <div class="flex items-center justify-center min-h-screen p-4 bg-base-300">
-        <div class="w-full max-w-md p-6 space-y-6 rounded-lg shadow-lg sm:p-8 bg-base-100">
-            <h1 class="text-3xl font-bold text-center sm:text-4xl text-primary">Register</h1>
-            <form @submit.prevent="handleSubmit" class="space-y-4 sm:space-y-6">
-                <div class="form-control">
-                    <label for="email" class="label">
-                    <span class="label-text">Email</span>
-                    </label>
-                    <input type="email" id="email" v-model="email" @input="validateEmail" placeholder="Email" :class="['w-full input input-bordered', {'input-error': emailError}]" required/>
-                    <label class="label" v-if="emailError">
-                        <span class="label-text-alt text-error">{{ emailError }}</span>
-                    </label>
+    <div class="min-h-screen hero bg-base-200">
+        <div class="flex-col w-full max-w-md hero-content">
+            <div class="w-full shadow-2xl card bg-base-100">
+                <div class="card-body">
+                    <h1 class="justify-center text-3xl card-title">Register</h1>
+                    <form @submit.prevent="handleSubmit">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Email</span>
+                            </label>
+                            <input type="email" v-model="email" @input="validateEmail" 
+                                   placeholder="Email" :class="['input input-bordered', {'input-error': emailError}]" required/>
+                            <label class="label" v-if="emailError">
+                                <span class="label-text-alt text-error">{{ emailError }}</span>
+                            </label>
+                        </div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Username</span>
+                            </label>
+                            <input type="text" v-model="username" @input="validateUsername" 
+                                   placeholder="Username" :class="['input input-bordered', {'input-error': usernameError}]" required/>
+                            <label class="label" v-if="usernameError">
+                                <span class="label-text-alt text-error">{{ usernameError }}</span>
+                            </label>
+                        </div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Password</span>
+                            </label>
+                            <input type="password" v-model="password" @input="validatePassword" 
+                                   placeholder="Password" :class="['input input-bordered', {'input-error': passwordError}]" required/>
+                            <label class="label" v-if="passwordError">
+                                <span class="label-text-alt text-error">{{ passwordError }}</span>
+                            </label>
+                        </div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Confirm Password</span>
+                            </label>
+                            <input type="password" v-model="passwordConfirmation" 
+                                   placeholder="Confirm Password" class="input input-bordered" required/>
+                            <label class="label" v-if="passwordError">
+                                <span class="label-text-alt text-error">{{ passwordError }}</span>
+                            </label>
+                        </div>
+                        <div class="mt-6 form-control">
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </div>
+                        <div class="mt-4 form-control">
+                            <label class="justify-center label">
+                                <span class="label-text-alt">Have an account?
+                                    <router-link to="/login" class="link link-primary">Login here</router-link>
+                                </span>
+                            </label>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-control">
-                    <label for="username" class="label">
-                    <span class="label-text">Username</span>
-                    </label>
-                    <input type="text" id="username" v-model="username" @input="validateUsername" placeholder="Username" :class="['w-full input input-bordered', {'input-error': usernameError}]" required />
-                    <label class="label" v-if="usernameError">
-                        <span class="label-text-alt text-error">{{ usernameError }}</span>
-                    </label>
-                </div>
-                <div class="form-control">
-                    <label for="password" class="label">
-                    <span class="label-text">Password</span>
-                    </label>
-                    <input type="password" id="password" v-model="password" @input="validatePassword" placeholder="Password" :class="['w-full input input-bordered', {'input-error': passwordError}]" required />
-                    <label class="label" v-if="passwordError">
-                        <span class="label-text-alt text-error">{{ passwordError }}</span>
-                    </label>
-                </div>
-                <div class="form-control">
-                    <label for="password_confirmation" class="label">
-                    <span class="label-text">Confirm Password</span>
-                    </label>
-                    <input type="password" id="password_confirmation" v-model="passwordConfirmation" placeholder="Confirm Password" class="w-full input input-bordered" required />
-                    <label class="label" v-if="passwordError">
-                        <span class="label-text-alt text-error">{{ passwordError }}</span>
-                    </label>
-                </div>
-                <div class="text-center">
-                    <p class="text-sm">
-                    Have an account?
-                    <router-link to="/login" class="text-primary hover:underline">Login here</router-link>.
-                    </p>
-                </div>
-                <div class="mt-6 form-control">
-                    <button type="submit" class="w-full btn btn-primary">Register</button>
-                </div>
-            </form>
+            </div>
         </div>
         <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
     </div>

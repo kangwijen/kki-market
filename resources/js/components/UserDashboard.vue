@@ -1,122 +1,132 @@
 <template>
-    <div class="flex items-center p-8 bg-base-300">
-            <a @click="$router.back()" class="items-center justify-center rounded-full btn btn-secondary">⮜</a>
-            <h1 class="ml-5 text-3xl font-bold">User Dashboard</h1>
-    </div>
-    <div class="flex flex-col min-h-screen md:flex-row">
-        <Sidebar 
-            title=""
-            :tabs="userTabs" 
-            :activeTab="activeTab" 
-            @changeTab="handleTabChange" 
-        />
+    <div class="min-h-screen bg-base-100">
 
-        <div class="flex-1 p-4">
-            <div v-if="activeTab === 'profileDetails'">
-                <div class="mb-8 card bg-base-200">
-                    <div class="card-body">
-                        <h2 class="mb-4 text-2xl card-title">Profile Details</h2>
-                        
-                        <div class="space-y-4">
-                            <div class="shadow-xl card bg-base-100">
-                                <div class="card-body">
-                                    <h3 class="card-title">Username</h3>
-                                    <input v-model="user.username" placeholder="Username" class="w-full input input-bordered" />
-                                </div>
-                            </div>
-                            <div class="shadow-xl card bg-base-100">
-                                <div class="card-body">
-                                    <h3 class="card-title">Email</h3>
-                                    <input v-model="user.email" placeholder="Email" class="w-full input input-bordered" />
-                                </div>
-                            </div>
-                            <div class="shadow-xl card bg-base-100">
-                                <div class="card-body">
-                                    <h3 class="card-title">Password</h3>
-                                    <input v-model="user.currentPassword" type="password" placeholder="Confirm Password" class="w-full mt-4 input input-bordered" />
-                                </div>
-                            </div>
-                            <button @click="updateUser(user)" class="btn btn-primary">Update</button>
-                        </div>
-                    </div>
-                </div>
+        <div class="navbar bg-base-300">
+            <div class="flex-1">
+                <a @click="$router.back()" class="btn btn-circle btn-ghost">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                <h1 class="text-3xl font-bold">User Dashboard</h1>
             </div>
-
-            <div v-if="activeTab === 'passwordChange'">
-                <div class="mb-8 card bg-base-200">
-                    <div class="card-body">
-                        <h2 class="mb-4 text-2xl card-title">Change Password</h2>
-                        
-                        <div class="space-y-4">
-                            <div class="shadow-xl card bg-base-100">
-                                <div class="card-body">
-                                    <h3 class="card-title">Current Password</h3>
-                                    <input type="password" v-model="user.currentPassword" placeholder="Confirm Password" class="w-full mt-4 input input-bordered" />
+        </div>
+    
+        <div class="flex flex-col min-h-screen md:flex-row">
+            <Sidebar 
+                title=""
+                :tabs="userTabs" 
+                :activeTab="activeTab" 
+                @changeTab="handleTabChange" 
+            />
+    
+            <div class="flex-1 p-4 bg-base-100">
+                <div v-if="activeTab === 'profileDetails'">
+                    <div class="mb-8 card bg-base-200">
+                        <div class="card-body">
+                            <h2 class="mb-4 text-2xl card-title">Profile Details</h2>
+                            
+                            <div class="space-y-4">
+                                <div class="shadow-xl card bg-base-100">
+                                    <div class="card-body">
+                                        <h3 class="card-title">Username</h3>
+                                        <input v-model="user.username" placeholder="Username" class="w-full input input-bordered" />
+                                    </div>
                                 </div>
                                 <div class="shadow-xl card bg-base-100">
                                     <div class="card-body">
-                                        <h3 class="card-title">New Password</h3>
-                                        <input type="password" v-model="user.newPassword" placeholder="Enter New Password" class="w-full mt-4 input input-bordered" />
+                                        <h3 class="card-title">Email</h3>
+                                        <input v-model="user.email" placeholder="Email" class="w-full input input-bordered" />
                                     </div>
                                 </div>
+                                <div class="shadow-xl card bg-base-100">
+                                    <div class="card-body">
+                                        <h3 class="card-title">Password</h3>
+                                        <input v-model="user.currentPassword" type="password" placeholder="Confirm Password" class="w-full mt-4 input input-bordered" />
+                                    </div>
+                                </div>
+                                <button @click="updateUser(user)" class="btn btn-primary">Update</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div v-if="activeTab === 'passwordChange'">
+                    <div class="mb-8 card bg-base-200">
+                        <div class="card-body">
+                            <h2 class="mb-4 text-2xl card-title">Change Password</h2>
+                            
+                            <div class="space-y-4">
+                                <div class="shadow-xl card bg-base-100">
+                                    <div class="card-body">
+                                        <h3 class="card-title">Current Password</h3>
+                                        <input type="password" v-model="user.currentPassword" placeholder="Confirm Password" class="w-full mt-4 input input-bordered" />
+                                    </div>
                                     <div class="shadow-xl card bg-base-100">
                                         <div class="card-body">
-                                            <h3 class="card-title">Confirm New password</h3>
-                                            <input type="password" v-model="user.newPasswordConfirm" placeholder="Confirm New Password" class="w-full mt-4 input input-bordered" />
+                                            <h3 class="card-title">New Password</h3>
+                                            <input type="password" v-model="user.newPassword" placeholder="Enter New Password" class="w-full mt-4 input input-bordered" />
                                         </div>
                                     </div>
+                                        <div class="shadow-xl card bg-base-100">
+                                            <div class="card-body">
+                                                <h3 class="card-title">Confirm New password</h3>
+                                                <input type="password" v-model="user.newPasswordConfirm" placeholder="Confirm New Password" class="w-full mt-4 input input-bordered" />
+                                            </div>
+                                        </div>
+                                </div>
+                                <button @click="updatePassword(user)" class="btn btn-primary">Update</button>
                             </div>
-                            <button @click="updatePassword(user)" class="btn btn-primary">Update</button>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div v-if="activeTab === 'purchaseHistory'">
-                <div class="shadow-xl card bg-base-200">
-                    <div class="card-body">
-                        <h2 class="text-2xl card-title">Purchase History</h2>
-                        
-                        <div class="space-y-6">
-                            <div v-for="transaction in purchaseHistory" :key="transaction.id" 
-                                class="shadow-lg card bg-base-100">
-                                <div class="card-body">
-                                    <div class="flex items-center justify-between pb-4 border-b">
-                                        <div>
-                                            <h3 class="text-lg font-bold">
-                                                Transaction #{{ transaction.id }}
-                                            </h3>
-                                            <p class="text-sm opacity-70">
-                                                {{ new Date(transaction.created_at).toLocaleDateString() }} 
-                                                at {{ new Date(transaction.created_at).toLocaleTimeString() }}
-                                            </p>
-                                        </div>
-                                        <div class="badge badge-primary badge-lg">
-                                            ${{ transaction.transaction_details.reduce((sum, item) => sum + item.total_price, 0) }}
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mt-4">
-                                        <div v-for="detail in transaction.transaction_details" 
-                                            :key="detail.product_id" 
-                                            class="flex items-center gap-4 py-4">
-                                            <div class="avatar">
-                                                <div class="w-16 h-16 rounded">
-                                                    <img :src="'/storage/' + detail.product.img_path" 
-                                                        :alt="detail.product.name" />
-                                                </div>
+    
+                <div v-if="activeTab === 'purchaseHistory'">
+                    <div class="shadow-xl card bg-base-200">
+                        <div class="card-body">
+                            <h2 class="text-2xl card-title">Purchase History</h2>
+                            
+                            <div class="space-y-6">
+                                <div v-for="transaction in purchaseHistory" :key="transaction.id" 
+                                    class="shadow-lg card bg-base-100">
+                                    <div class="card-body">
+                                        <div class="flex items-center justify-between pb-4 border-b">
+                                            <div>
+                                                <h3 class="text-lg font-bold">
+                                                    Transaction #{{ transaction.id }}
+                                                </h3>
+                                                <p class="text-sm opacity-70">
+                                                    {{ new Date(transaction.created_at).toLocaleDateString() }} 
+                                                    at {{ new Date(transaction.created_at).toLocaleTimeString() }}
+                                                </p>
                                             </div>
-                                            <div class="flex-1">
-                                                <button @click="goToProductDetails(detail.product_id)" class="flex-1 transition hover:text-white">
-                                                    {{ detail.product.name }}
-                                                </button>
-                                                <div class="text-sm opacity-70">
-                                                    <p>Quantity: {{ detail.quantity }}</p>
-                                                    <p>Price: ${{ detail.price }}</p>
-                                                    <p class="font-semibold">Total: ${{ detail.total_price }}</p>
-                                                </div>
+                                            <div class="badge badge-primary badge-lg">
+                                                ${{ transaction.transaction_details.reduce((sum, item) => sum + item.total_price, 0) }}
                                             </div>
-                                            <a>Download Link</a>
+                                        </div>
+                                        
+                                        <div class="mt-4">
+                                            <div v-for="detail in transaction.transaction_details" 
+                                                :key="detail.product_id" 
+                                                class="flex items-center gap-4 py-4">
+                                                <div class="avatar">
+                                                    <div class="w-16 h-16 rounded">
+                                                        <img :src="'/storage/' + detail.product.img_path" 
+                                                            :alt="detail.product.name" />
+                                                    </div>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <button @click="goToProductDetails(detail.product_id)" class="flex-1 transition hover:text-white">
+                                                        {{ detail.product.name }}
+                                                    </button>
+                                                    <div class="text-sm opacity-70">
+                                                        <p>Quantity: {{ detail.quantity }}</p>
+                                                        <p>Price: ${{ detail.price }}</p>
+                                                        <p class="font-semibold">Total: ${{ detail.total_price }}</p>
+                                                    </div>
+                                                </div>
+                                                <a>Download Link</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -124,33 +134,33 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div v-if="activeTab === 'purchaseCredits'">
-                <div class="mb-8 card bg-base-200">
-                    <div class="card-body">
-                        <h2 class="mb-4 text-2xl card-title">Purchase Credits</h2>
-                        
-                        <div class="shadow-xl card bg-base-100">
-                            <div class="card-body">
-                                <h3 class="card-title">Current Balance</h3>
-                                <p class="text-2xl font-bold">${{ userBalance }}</p>
+    
+                <div v-if="activeTab === 'purchaseCredits'">
+                    <div class="mb-8 card bg-base-200">
+                        <div class="card-body">
+                            <h2 class="mb-4 text-2xl card-title">Purchase Credits</h2>
+                            
+                            <div class="shadow-xl card bg-base-100">
+                                <div class="card-body">
+                                    <h3 class="card-title">Current Balance</h3>
+                                    <p class="text-2xl font-bold">${{ userBalance }}</p>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="space-x-4 space-y-4">
-                            <input v-model="amount" type="number" min="1" placeholder="Enter amount" class="input input-bordered">
-                            <button @click="purchaseCredits" class="btn btn-primary">Purchase</button>
+                            
+                            <div class="space-x-4 space-y-4">
+                                <input v-model="amount" type="number" min="1" placeholder="Enter amount" class="input input-bordered">
+                                <button @click="purchaseCredits" class="btn btn-primary">Purchase</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
+    
             
+            </div>
         </div>
+    
+        <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
     </div>
-
-    <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
 </template>
 
 <script>
