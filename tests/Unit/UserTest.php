@@ -143,7 +143,7 @@ class UserTest extends TestCase
     public function test_role_has_required_attributes()
     {
         $role = Role::factory()->create();
-
+        
         $this->assertNotNull($role->name);
         $this->assertNotNull($role->privilege_level);
         $this->assertIsString($role->name);

@@ -82,6 +82,29 @@ class UserTest extends TestCase
                  ->assertJsonValidationErrors(['currentPassword']);
     }
 
+    public function test_user_can_update_password() {
+        $this->actingAs($this->user);
+
+        $response = $this->putJson("/api/user-details", [
+            'currentPassword' => 'Password123',
+            'email' => 'user@test.com',
+            'id' => $this->user->id,
+            'isAdmin' => false,
+            'newPassword' => 'Password1234!',
+            'newPasswordConfirm' => 'Password1234!',
+            'username' => 'newname'
+        ]);
+    
+        $response->assertStatus(200)
+                 ->assertJson(['message'=> 'User details updated successfully']);
+
+        $this->assertDatabaseHas('users', [
+            'username' => 'newname',
+            'email' => 'user@test.com',
+            'password' => Hash::check('Password1234!', $this->user->password)
+        ]);
+    }
+
     public function test_admin_can_update_user_details()
     {
         $this->actingAs($this->admin);
