@@ -528,9 +528,14 @@ export default {
                     showPopup('Error', 'Please enter new username', 'error');
                     return false;
                 }
+                
+                if (user.user_detail.balance === null) {
+                    showPopup('Error', 'Minimal balance is 0', 'error');
+                    return false;
+                }
 
                 const updateData = { ...user};
-                
+                console.log(updateData);
                 await axios.put(`/user-update/${user.id}`, updateData);
                 showPopup('Success', 'User details updated successfully', 'success');
             } catch (error) {

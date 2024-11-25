@@ -106,7 +106,9 @@ class UserDetailController extends Controller
             DB::beginTransaction();
             
             $validated = $request->validated();
+            // var_dump($request);
             $user = User::findOrFail($id);
+            $userDetail = $user->userDetail;
 
             if (isset($validated['email'])) {
                 $user->email = $validated['email'];
@@ -116,7 +118,12 @@ class UserDetailController extends Controller
                 $user->username = $validated['username'];
             }
 
-            $allowedFields = ['username', 'email'];
+            if (isset($validated['balance'])) {
+                $userDetail->balance = $validated['balance'];
+            }
+
+
+            $allowedFields = ['username', 'email', 'balance'];
             $validated = array_intersect_key($validated, array_flip($allowedFields));
             
             $user->update($validated);
