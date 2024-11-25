@@ -121,7 +121,6 @@ export default {
 
         const validatePassword = () => {
             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
-            console.log(password.value.length);
             if (!password.value) {
                 passwordError.value = 'Password is required';
             } else if (password.value.length < 8) {
