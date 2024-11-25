@@ -68,7 +68,9 @@ class CartController extends Controller
 
             DB::commit();
 
-            return response()->json($cart, 201);
+            return response()->json([
+                'message' => 'Product added to cart',
+            ], 200);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -212,8 +214,7 @@ class CartController extends Controller
             $transaction->load('transactionDetails.product.productDetail');
 
             return response()->json([
-                'message' => 'Checkout successful',
-                'transaction' => $transaction,
+                'message' => 'Checkout successful'
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();

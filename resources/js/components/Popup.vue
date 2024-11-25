@@ -1,6 +1,6 @@
 <template>
     <Teleport to="body">
-        <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center">
+        <div v-if="show" class="fixed inset-0 flex items-center justify-center z-100">
             <div class="absolute inset-0 bg-black opacity-50" @click="close"></div>
             <div class="relative p-6 bg-white rounded-lg shadow-xl">
             <h2 class="mb-4 text-xl font-bold" :class="popupTitleClass">{{ title }}</h2>

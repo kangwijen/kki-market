@@ -132,11 +132,7 @@ export default {
                     product_id: product.value.id,
                     quantity: parseInt(quantity.value)
                 }, { 
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    }
+                    withCredentials: true
                 });
                 showPopup('Success', 'Product added to cart successfully!', 'success')
                 window.dispatchEvent(new Event('cart-updated'));
