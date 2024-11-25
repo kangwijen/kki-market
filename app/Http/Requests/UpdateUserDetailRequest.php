@@ -34,6 +34,7 @@ class UpdateUserDetailRequest extends FormRequest
             return [
                 'username' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z0-9_-]+$/', 'not_regex:/[<>{}[\]\/]/'],
                 'email' => ['sometimes', 'string', 'email:rfc', 'max:255'],
+                'user_detail.balance' => ['sometimes', 'required', 'numeric', 'min:0'],
                 'newPassword' => ['nullable', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/'],
                 'newPasswordConfirm' => ['nullable', 'required_with:newPassword', 'string', 'same:newPassword'],
             ];

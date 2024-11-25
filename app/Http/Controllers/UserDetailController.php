@@ -107,20 +107,19 @@ class UserDetailController extends Controller
             
             $validated = $request->validated();
             $user = User::findOrFail($id);
+            $userDetail = $user->userDetail;
 
-            if (isset($validated['email'])) {
-                $user->email = $validated['email'];
-            }
-    
-            if (isset($validated['username'])) {
-                $user->username = $validated['username'];
+            $userFields = ['username', 'email'];
+            $userUpdates = array_intersect_key($validated, array_flip($userFields));
+            if (!empty($userUpdates)) {
+                $user->update($userUpdates);
             }
 
-            $allowedFields = ['username', 'email'];
-            $validated = array_intersect_key($validated, array_flip($allowedFields));
+            if (isset($validated['user_detail']['balance'])) {
+                $userDetail->balance = $validated['user_detail']['balance'];
+                $userDetail->save();
+            }
             
-            $user->update($validated);
-
             DB::commit();
 
             return response()->json([
