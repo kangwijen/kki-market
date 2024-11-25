@@ -53,35 +53,21 @@
             </div>
         </div>
     </nav>
-    <Popup v-model:show="popupShow" :title="popupTitle" :message="popupMessage" :type="popupType" />
 </template>
 
 <script>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-import Popup from './Popup.vue'
 
 export default {
     name: 'Navbar',
-    components: { Popup },
     setup() {
         const cartCount = ref(0);
         const isAuthenticated = ref(false);
         const isAdmin = ref(false);
         const isMenuOpen = ref(false);
         const router = useRouter();
-        const popupShow = ref(false)
-        const popupTitle = ref('')
-        const popupMessage = ref('')
-        const popupType = ref('info')
-
-        const showPopup = (title, message, type = 'info') => {
-            popupTitle.value = title
-            popupMessage.value = message
-            popupType.value = type
-            popupShow.value = true
-        }
 
         const toggleMenu = () => {
             isMenuOpen.value = !isMenuOpen.value;
@@ -109,7 +95,7 @@ export default {
                 window.dispatchEvent(new Event('logout'));
                 router.push('/');
             } catch (error) {
-                showPopup('Error', error.response?.data?.error || 'Failed to logout user', 'error');
+                
             }
         };
 
@@ -118,7 +104,7 @@ export default {
                 await axios.get('/admin');
                 router.push('/admin');
             } catch (error) {
-                showPopup('Error', error.response?.data?.error || 'Failed to access admin page', 'error');
+                
             }
         };
 
@@ -127,7 +113,7 @@ export default {
                 await axios.get('/profile');
                 router.push('/profile');
             } catch (error) {
-                showPopup('Error', error.response?.data?.error || 'Failed to access profile page', 'error');
+                
             }
         };
 
@@ -141,7 +127,7 @@ export default {
                     );
                 }
             } catch (error) {
-                showPopup('Error', error.response?.data?.error || 'Failed to fetch cart items', 'error');
+                
                 cartCount.value = 0;
             }
         };
@@ -173,10 +159,6 @@ export default {
             isAdmin,
             isMenuOpen,
             cartCount,
-            popupShow,
-            popupTitle,
-            popupMessage,
-            popupType,
             updateCartCount,
             toggleMenu,
             logout,

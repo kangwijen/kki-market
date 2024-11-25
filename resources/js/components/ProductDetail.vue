@@ -137,7 +137,7 @@ export default {
                 showPopup('Success', 'Product added to cart successfully!', 'success')
                 window.dispatchEvent(new Event('cart-updated'));
             } catch (error) {
-                showPopup('Error', error.response?.data?.error || 'Failed to update password', 'error');
+                showPopup('Error', error.response?.data?.message || 'Failed to add product to cart', 'error')
             }
         }
 

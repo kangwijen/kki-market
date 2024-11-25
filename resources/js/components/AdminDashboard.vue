@@ -534,7 +534,6 @@ export default {
                 await axios.put(`/user-update/${user.id}`, updateData);
                 showPopup('Success', 'User details updated successfully', 'success');
             } catch (error) {
-                console.log(error);
                 showPopup('Error', error.response?.data?.error || 'Failed to update user details', 'error');
             }
         };

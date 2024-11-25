@@ -41,12 +41,12 @@
                                 <div class="flex items-center gap-2">
                                     <div class="join">
                                         <span class="join-item btn btn-sm">$</span>
-                                        <input v-model="minPrice" type="number" min="0" max="200" class="w-24 join-item input input-bordered input-sm" @input="filterProducts" />
+                                        <input v-model="minPrice" type="number" min="0" max="999999" class="w-24 join-item input input-bordered input-sm" @input="filterProducts" />
                                     </div>
                                     <span>to</span>
                                     <div class="join">
                                         <span class="join-item btn btn-sm">$</span>
-                                        <input v-model="maxPrice" type="number" min="0" max="200" class="w-24 join-item input input-bordered input-sm" @input="filterProducts" />
+                                        <input v-model="maxPrice" type="number" min="0" max="999999" class="w-24 join-item input input-bordered input-sm" @input="filterProducts" />
                                     </div>
                                 </div>
                             </div>
@@ -75,12 +75,12 @@
                             <div class="flex items-center gap-2">
                                 <div class="join">
                                     <span class="join-item btn btn-sm">$</span>
-                                    <input v-model="minPrice" type="number" min="0" max="200" class="w-24 join-item input input-bordered input-sm" @input="filterProducts" />
+                                    <input v-model="minPrice" type="number" min="0" max="999999" class="w-24 join-item input input-bordered input-sm" @input="filterProducts" />
                                 </div>
                                 <span>to</span>
                                 <div class="join">
                                     <span class="join-item btn btn-sm">$</span>
-                                    <input v-model="maxPrice" type="number" min="0" max="200" class="w-24 join-item input input-bordered input-sm" @input="filterProducts" />
+                                    <input v-model="maxPrice" type="number" min="0" max="999999" class="w-24 join-item input input-bordered input-sm" @input="filterProducts" />
                                 </div>
                             </div>
                         </div>
@@ -214,7 +214,7 @@ export default {
                 showPopup('Success', 'Product added to cart successfully!', 'success')
                 window.dispatchEvent(new Event('cart-updated'));
             } catch (error) {
-                showPopup('Error', error.response?.data?.error || 'Failed to add product to cart', 'error')
+                showPopup('Error', error.response?.data?.message || 'Failed to add product to cart', 'error')
             }
         }
 
