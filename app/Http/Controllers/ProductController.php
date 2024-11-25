@@ -112,14 +112,18 @@ class ProductController extends Controller
     {
         try {
             $request->validate([
-                'image' => 'required|image|max:2048',
+                'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             ]);
-
-            $imagePath = $request->file('image')->store('.', 'public');
-
+    
+            $extension = $request->file('image')->getClientOriginalExtension();
+            $filename = uniqid('product_', true) . '.' . $extension;
+    
+            $imagePath = $request->file('image')->storeAs('products', $filename, 'public');
+    
             return response()->json(['image_path' => $imagePath]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to upload image: ' . $e->getMessage()], 500);
         }
     }
+    
 }

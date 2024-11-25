@@ -16,6 +16,9 @@ class ProductDetail extends Model
     protected $fillable = ['product_id', 'price', 'stock', 'sold', 'description'];
 
     protected $casts = [
+        'price' => 'decimal:2',
+        'stock' => 'integer',
+        'sold' => 'integer',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\TransactionDetail;
 use App\Http\Requests\StoreTransactionDetailRequest;
 use App\Http\Requests\UpdateTransactionDetailRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TransactionDetailController extends Controller
 {
@@ -37,7 +39,14 @@ class TransactionDetailController extends Controller
      */
     public function show(TransactionDetail $transactionDetail)
     {
-        //
+        $user = Auth::user();
+        $isAdmin = $user->role_id === 1;
+
+        if (!$isAdmin && $transactionDetail->transactionHeader->user_id !== $user->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        return response()->json($transactionDetail->load('product.productDetail'));
     }
 
     /**
@@ -53,7 +62,17 @@ class TransactionDetailController extends Controller
      */
     public function update(UpdateTransactionDetailRequest $request, TransactionDetail $transactionDetail)
     {
-        //
+        $user = Auth::user();
+        $isAdmin = $user->role_id === 1;
+
+        if (!$isAdmin && $transactionDetail->transactionHeader->user_id !== $user->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        return DB::transaction(function() use ($request, $transactionDetail) {
+            $transactionDetail->update($request->validated());
+            return response()->json($transactionDetail);
+        });
     }
 
     /**

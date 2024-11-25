@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ProductType;
 use App\Http\Requests\StoreProductTypeRequest;
 use App\Http\Requests\UpdateProductTypeRequest;
+use Illuminate\Support\Facades\DB;
 
 class ProductTypeController extends Controller
 {
@@ -30,8 +31,10 @@ class ProductTypeController extends Controller
      */
     public function store(StoreProductTypeRequest $request)
     {
-        $productType = ProductType::create($request->validated());
-        return response()->json($productType);
+        return DB::transaction(function() use ($request) {
+            $productType = ProductType::create($request->validated());
+            return response()->json($productType, 201);
+        });
     }
 
     /**
@@ -55,21 +58,24 @@ class ProductTypeController extends Controller
      */
     public function update(UpdateProductTypeRequest $request, ProductType $productType)
     {
-        $productType->update($request->validated());
-
-        return response()->json($productType);
+        return DB::transaction(function() use ($request, $productType) {
+            $productType->update($request->validated());
+            return response()->json($productType);
+        });
     }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(ProductType $productType)
     {
-        if ($productType->products()->exists()) {
-            return response()->json(['error' => 'There are still products with this product type.'], 400);
-        }
-    
-        $productType->delete();
-        return response()->json(['message' => 'Product type deleted successfully']);
+        return DB::transaction(function() use ($productType) {
+            if ($productType->products()->exists()) {
+                return response()->json(['error' => 'Cannot delete product type with associated products'], 400);
+            }
+            
+            $productType->delete();
+            return response()->json(null, 204);
+        });
     }
-    
 }

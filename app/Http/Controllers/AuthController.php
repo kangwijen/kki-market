@@ -12,13 +12,22 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+            'email' => ['required', 'email', 'max:255'],
+            'password' => ['required', 'min:8'],
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, true)) {
             $request->session()->regenerate();
-            return redirect()->intended('/products');
+            return redirect()->intended('/products')->cookie(
+                'session',
+                $request->session()->getId(),
+                config('session.lifetime'),
+                null,
+                null,
+                true,
+                true,
+                true
+            );
         }
 
         throw ValidationException::withMessages([
@@ -39,11 +48,13 @@ class AuthController extends Controller
             ]
         ]);
     }
+
     public function logout(Request $request)
     {
         auth()->guard('web')->logout();
         $request->session()->invalidate();
-
-        return redirect('/');
+        $request->session()->regenerateToken();
+        
+        return redirect('/')->cookie('session', null, -1);
     }
 }
