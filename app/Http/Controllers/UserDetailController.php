@@ -107,20 +107,19 @@ class UserDetailController extends Controller
             
             $validated = $request->validated();
             $user = User::findOrFail($id);
+            $userDetail = $user->userDetail;
 
-            if (isset($validated['email'])) {
-                $user->email = $validated['email'];
-            }
-    
-            if (isset($validated['username'])) {
-                $user->username = $validated['username'];
+            $userFields = ['username', 'email'];
+            $userUpdates = array_intersect_key($validated, array_flip($userFields));
+            if (!empty($userUpdates)) {
+                $user->update($userUpdates);
             }
 
-            $allowedFields = ['username', 'email'];
-            $validated = array_intersect_key($validated, array_flip($allowedFields));
+            if (isset($validated['user_detail']['balance'])) {
+                $userDetail->balance = $validated['user_detail']['balance'];
+                $userDetail->save();
+            }
             
-            $user->update($validated);
-
             DB::commit();
 
             return response()->json([
@@ -158,38 +157,29 @@ class UserDetailController extends Controller
      */
     public function purchaseCredits(UpdatePurchaseCreditsRequest $request)
     {   
-        $user = Auth::user();
-        $userDetail = $user->userDetail;
-
         try {
-            DB::beginTransaction();
+            return DB::transaction(function() use ($request) {
+                $user = Auth::user();
+                $userDetail = UserDetail::where('user_id', $user->id)
+                    ->lockForUpdate()
+                    ->first();
 
-            $response = Http::post('http://localhost:5001/api/charge', [
-                'amount' => $request->amount,
-            ]);
+                $response = Http::timeout(30)
+                    ->post('http://localhost:5001/api/charge', [
+                        'amount' => $request->amount
+                    ]);
 
-            if ($response->failed()) {
-                return response()->json([
-                    'message' => 'An error occurred while purchasing credits',
-                    'error' => 'Payment Processor Error: ' . $response->json()['message']
-                ], 500);
-            }
+                if ($response->failed()) {
+                    throw new \Exception('Payment failed: ' . $response->body());
+                }
 
-            $amount = $request->amount;
-            $userDetail->balance += $amount;
-            $userDetail->save();
+                $userDetail->balance += $request->amount;
+                $userDetail->save();
 
-            DB::commit();
-
-            return response()->json([
-                'balance' => $userDetail->balance
-            ], 200);
+                return response()->json(['balance' => $userDetail->balance], 200);
+            }, 5);
         } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'An error occurred while purchasing credits',
-                'error' => $e->getMessage()
-            ], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

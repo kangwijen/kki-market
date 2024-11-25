@@ -372,22 +372,6 @@ export default {
             return true;
         };
 
-        const validateFileUpload = (file) => {
-            const maxSize = 5 * 1024 * 1024; // 5MB
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-            
-            if (!file) return false;
-            if (file.size > maxSize) {
-                showPopup('Error', 'File size must be less than 5MB', 'error');
-                return false;
-            }
-            if (!allowedTypes.includes(file.type)) {
-                showPopup('Error', 'Only JPEG, PNG and WEBP files are allowed', 'error');
-                return false;
-            }
-            return true;
-        };
-
         const handleImageUpload = async (event, product = null) => {
             try {
                 const file = event.target.files[0];
@@ -526,6 +510,11 @@ export default {
 
                 if (user.username === '') {
                     showPopup('Error', 'Please enter new username', 'error');
+                    return false;
+                }
+
+                if (user.user_detail.balance === null) {
+                    showPopup('Error', 'Minimal balance is 0', 'error');
                     return false;
                 }
 

@@ -167,11 +167,10 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import Popup from './Popup.vue';
-import Confirmation from './Confirmation.vue';
 import Sidebar from './Sidebar.vue';
 
 export default {
-    components: { Popup, Confirmation, Sidebar },
+    components: { Popup, Sidebar },
     setup() {
         const popupShow = ref(false);
         const popupTitle = ref('');
