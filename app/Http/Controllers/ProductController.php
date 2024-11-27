@@ -27,6 +27,7 @@ class ProductController extends Controller
                 'product_detail' => [
                     'price' => $product->productDetail->price,
                     'stock' => $product->productDetail->stock,
+                    'sold' => $product->productDetail->sold,
                 ],
             ];
         });
@@ -93,6 +94,7 @@ class ProductController extends Controller
             'product_detail' => [
                 'price' => $product->productDetail->price,
                 'stock' => $product->productDetail->stock,
+                'sold' => $product->productDetail->sold,
             ],
         ];
         
