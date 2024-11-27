@@ -29,7 +29,7 @@ class StoreProductRequest extends FormRequest
             'product_detail.description' => ['required', 'string', 'max:10000'],
             'product_detail.price' => ['required', 'numeric', 'min:0', 'max:999999.99'],
             'product_detail.stock' => ['required', 'integer', 'min:0', 'max:999999'],
-            'product_detail.url' => ['required', 'string', 'max:255', 'regex:/^[\w\-\/\.]+$/'],
+            'product_detail.url' => ['required', 'string', 'max:255', 'url'],
         ];
     }
 }

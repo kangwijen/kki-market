@@ -64,6 +64,12 @@
                                         <option v-for="type in productTypes" :key="type.id" :value="type.id">{{ type.name }}</option>
                                     </select>
                                 </div>
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text">Product URL</span>
+                                    </label>
+                                    <input v-model="newProduct.product_url" placeholder="Product URL" class="w-full input input-bordered" required>
+                                </div>
                                 <button type="submit" class="w-full btn btn-primary sm:col-span-2 lg:col-span-3">Create Product</button>
                             </form>
                         </div>
@@ -112,6 +118,12 @@
                                                 <select v-model="product.product_type_id" class="w-full select select-bordered">
                                                 <option v-for="type in productTypes" :key="type.id" :value="type.id">{{ type.name }}</option>
                                                 </select>
+                                            </div>
+                                            <div class="form-control">
+                                                <label class="label">
+                                                    <span class="label-text">Product URL</span>
+                                                </label>
+                                                <input v-model="product.product_detail.url" placeholder="Product URL" class="w-full input input-bordered" />
                                             </div>
                                         </div>
                                         <div class="justify-end card-actions">
@@ -297,7 +309,8 @@ export default {
             product_detail: {
                 price: '',
                 description: '',
-                stock: ''
+                stock: '',
+                url: ''
             },
             img_path: '',
             product_type_id: ''
@@ -337,7 +350,7 @@ export default {
 
         const fetchProducts = async () => {
             try {
-                const response = await axios.get('/products');
+                const response = await axios.get('/products-admin');
                 products.value = response.data;
             } catch (error) {
                 showPopup('Error', error.response?.data?.error || 'Failed to fetch products', 'error');
@@ -367,6 +380,20 @@ export default {
             }
             if (isNaN(product.product_detail.stock) || product.product_detail.stock < 0) {
                 showPopup('Error', 'Please enter a valid stock amount', 'error');
+                return false;
+            }
+            if (!product.product_type_id) {
+                showPopup('Error', 'Please select a product type', 'error');
+                return false;
+            }
+            if (!product.product_url.trim()) {
+                showPopup('Error', 'Please enter a product URL', 'error');
+                return false;
+            }
+            try {
+                new URL(product.product_url);
+            } catch (error) {
+                showPopup('Error', 'Please enter a valid URL format', 'error');
                 return false;
             }
             return true;
@@ -421,7 +448,8 @@ export default {
                     product_detail: {
                         price: parseFloat(newProduct.value.product_detail.price),
                         description: newProduct.value.product_detail.description.trim(),
-                        stock: parseInt(newProduct.value.product_detail.stock)
+                        stock: parseInt(newProduct.value.product_detail.stock),
+                        url: newProduct.value.product_url.trim()
                     },
                     img_path: newProduct.value.img_path,
                     product_type_id: newProduct.value.product_type_id
@@ -435,13 +463,27 @@ export default {
                     product_detail: {
                         price: '',
                         description: '',
-                        stock: ''
+                        stock: '',
+                        url: ''
                     },
                     img_path: '',
                     product_type_id: ''
                 };
             } catch (error) {
-                showPopup('Error', error.response?.data?.error || 'Failed to create product', 'error');
+                if (error.response?.data?.error) {
+                    showPopup('Error', error.response.data.error, 'error');
+                } else {
+                    const errors = error.response?.data?.errors;
+
+                    let errorMessage = 'Failed to update password';
+                    if (errors) {
+                        errorMessage = Object.values(errors)
+                            .flat() 
+                            .join('\n'); 
+                    }
+
+                    showPopup('Error', errorMessage, 'error');
+                }
             }
         };
 

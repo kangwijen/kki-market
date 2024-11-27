@@ -18,7 +18,6 @@ Route::middleware('throttle:30,1')->group(function () {
 
 Route::prefix('/api')->middleware(['auth:sanctum', 'throttle:30,1'])->group(function () {
     Route::get('/user-details', [AuthController::class, 'user']);
-    Route::get('/user-details/all', [UserDetailController::class, 'index']);
     Route::get('/user-details/balance', [UserDetailController::class, 'balance']);
     Route::get('/user-details/purchase-history', [TransactionHeaderController::class, 'index']);
     Route::post('/user-details/purchase-credits', [UserDetailController::class, 'purchaseCredits']);
@@ -27,28 +26,29 @@ Route::prefix('/api')->middleware(['auth:sanctum', 'throttle:30,1'])->group(func
     
     Route::get('/products', [ProductController::class, 'index']);
     Route::get('/product/{id}', [ProductController::class, 'show']);
-
+    
     Route::middleware('admin')->group(function () {
+        Route::get('/user-details/all', [UserDetailController::class, 'index']);
+        Route::put('/user-update/{id}', [UserDetailController::class, 'updateAdmin']);
+
+        Route::get('/products-admin', [ProductController::class, 'indexAdmin']);
         Route::post('/product', [ProductController::class, 'store']);
         Route::put('/product/{product}', [ProductController::class, 'update']);
         Route::delete('/product/{product}', [ProductController::class, 'destroy']);
-
         Route::post('/product/upload-image', [ProductController::class, 'uploadImage']);
 
         Route::post('/product-types', [ProductTypeController::class, 'store']);
         Route::put('/product-types/{productType}', [ProductTypeController::class, 'update']);
         Route::delete('/product-types/{productType}', [ProductTypeController::class, 'destroy']);
         
-        Route::put('/user-update/{id}', [UserDetailController::class, 'updateAdmin']);
-
+        Route::put('/cart/{product_id}', [CartController::class, 'update'])->name('cart.update');
     });
-
+    
     Route::get('/product-types', [ProductTypeController::class, 'index']);
-
+    
     Route::get('/cart', [CartController::class, 'index']);
     Route::post('/cart', [CartController::class, 'store']);
     Route::post('/cart/checkout', [CartController::class, 'checkout']);
-    Route::put('/cart/{product_id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/{id}', [CartController::class, 'destroy']);
 });
 

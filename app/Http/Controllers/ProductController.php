@@ -18,6 +18,25 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::with('productDetail', 'productType')->get();
+        $products = $products->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'img_path' => $product->img_path,
+                'product_type' => $product->productType->name,
+                'product_detail' => [
+                    'price' => $product->productDetail->price,
+                    'stock' => $product->productDetail->stock,
+                ],
+            ];
+        });
+
+        return response()->json($products);
+    }
+
+    public function indexAdmin()
+    {
+        $products = Product::with('productDetail', 'productType')->get();
         return response()->json($products);
     }
 
@@ -63,7 +82,20 @@ class ProductController extends Controller
      */
     public function show($id)
     {
+        
         $product = Product::with('productDetail', 'productType')->findOrFail($id);
+        // Get only the necessary data
+        $product = [
+            'id' => $product->id,
+            'name' => $product->name,
+            'img_path' => $product->img_path,
+            'product_type' => $product->productType->name,
+            'product_detail' => [
+                'price' => $product->productDetail->price,
+                'stock' => $product->productDetail->stock,
+            ],
+        ];
+        
         return response()->json($product);
     }
 
