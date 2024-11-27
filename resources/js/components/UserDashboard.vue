@@ -125,7 +125,11 @@
                                                         <p class="font-semibold">Total: ${{ detail.total_price }}</p>
                                                     </div>
                                                 </div>
-                                                <a>Download Link</a>
+                                                <div>
+                                                    <a :href="detail.product.url" class="btn btn-primary" target="_blank" download>
+                                                        Download
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -224,6 +228,7 @@ export default {
             try {
                 const response = await axios.get('/user-details/purchase-history');
                 purchaseHistory.value = response.data;
+                console.log(purchaseHistory.value);
             } catch (error) {
                 showPopup('Error', error.response?.data?.error || 'Failed to fetch purchase history', 'error');
             }

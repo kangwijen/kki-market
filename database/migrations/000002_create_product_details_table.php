@@ -17,7 +17,8 @@ return new class extends Migration
             $table->integer('stock'); 
             $table->integer('sold')->default(0); 
             $table->integer('discount')->default(0);
-            $table->text('description')->nullable(); 
+            $table->text('description')->nullable();
+            $table->string('url')->default('https://example.com');
             $table->timestamps();
         });
     }

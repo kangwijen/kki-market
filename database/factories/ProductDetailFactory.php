@@ -22,6 +22,7 @@ class ProductDetailFactory extends Factory
             'sold' => 0,
             'discount' => $this->faker->numberBetween(0, 50),
             'description' => $this->faker->text(),
+            'url' => $this->faker->url(),
         ];
     }
 }

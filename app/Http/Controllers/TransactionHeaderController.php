@@ -14,7 +14,36 @@ class TransactionHeaderController extends Controller
      */
     public function index()
     {
-        //
+        $transactionHeaders = TransactionHeader::where('user_id', Auth::id())
+            ->with([
+                'transactionDetails.product' => function($query) {
+                    $query->select('id', 'name', 'img_path');  // Add img_path to selection
+                }
+            ])
+            ->get();
+
+        $transactionHeaders = $transactionHeaders->map(function($transactionHeader) {
+            return [
+                'id' => $transactionHeader->id,
+                'created_at' => $transactionHeader->created_at,
+                'transaction_details' => $transactionHeader->transactionDetails->map(function($transactionDetail) {
+                    return [
+                        'product_id' => $transactionDetail->product_id,
+                        'quantity' => $transactionDetail->quantity,
+                        'price' => $transactionDetail->price,
+                        'total_price' => $transactionDetail->quantity * $transactionDetail->price,
+                        'product' => [
+                            'id' => $transactionDetail->product->id,
+                            'name' => $transactionDetail->product->name,
+                            'img_path' => $transactionDetail->product->img_path,
+                            'url' => $transactionDetail->product->productDetail->url
+                        ]
+                    ];
+                })
+            ];
+        });
+
+        return response()->json($transactionHeaders);
     }
 
     /**
@@ -38,21 +67,7 @@ class TransactionHeaderController extends Controller
      */
     public function show(TransactionHeader $transactionHeader)
     {
-        if (!Auth::user()->role_id === 1 && $transactionHeader->user_id !== Auth::id()) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        $query = Auth::user()->role_id === 1
-            ? TransactionHeader::query()
-            : TransactionHeader::where('user_id', Auth::id());
-
-        $transactionHeaders = $query->with([
-            'transactionDetails.product' => function($query) {
-                $query->select('id', 'name');
-            }
-        ])->get();
-
-        return response()->json($transactionHeaders);
+        //
     }
 
     /**

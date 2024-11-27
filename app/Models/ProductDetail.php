@@ -13,7 +13,7 @@ class ProductDetail extends Model
     public $incrementing = false;
     protected $keyType = 'int';
 
-    protected $fillable = ['product_id', 'price', 'stock', 'sold', 'description'];
+    protected $fillable = ['product_id', 'price', 'stock', 'sold', 'description', 'url'];
 
     protected $casts = [
         'price' => 'decimal:2',

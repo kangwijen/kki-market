@@ -20,7 +20,7 @@ Route::prefix('/api')->middleware(['auth:sanctum', 'throttle:30,1'])->group(func
     Route::get('/user-details', [AuthController::class, 'user']);
     Route::get('/user-details/all', [UserDetailController::class, 'index']);
     Route::get('/user-details/balance', [UserDetailController::class, 'balance']);
-    Route::get('/user-details/purchase-history', [TransactionHeaderController::class, 'show']);
+    Route::get('/user-details/purchase-history', [TransactionHeaderController::class, 'index']);
     Route::post('/user-details/purchase-credits', [UserDetailController::class, 'purchaseCredits']);
     Route::put('/user-details', [UserDetailController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);

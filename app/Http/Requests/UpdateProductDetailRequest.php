@@ -26,7 +26,7 @@ class UpdateProductDetailRequest extends FormRequest
             'description' => ['sometimes', 'string', 'max:10000'],
             'price' => ['sometimes', 'numeric', 'min:0', 'max:999999.99'],
             'stock' => ['sometimes', 'integer', 'min:0', 'max:999999'],
-            'img_path' => ['sometimes', 'string', 'max:255', 'regex:/^[\w\-\/\.]+$/'],
+            'url' => ['sometimes', 'string', 'max:255', 'regex:/^[\w\-\/\.]+$/'],
         ];
     }
 }
