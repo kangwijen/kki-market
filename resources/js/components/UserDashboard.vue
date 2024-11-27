@@ -284,16 +284,20 @@ export default {
                 showPopup('Success', 'Password updated successfully', 'success');
                 clearPasswords();
             } catch (error) {
-                const errors = error.response?.data?.errors;
+                if (error.response?.data?.error) {
+                    showPopup('Error', error.response.data.error, 'error');
+                } else {
+                    const errors = error.response?.data?.errors;
 
-                let errorMessage = 'Failed to update password';
-                if (errors) {
-                    errorMessage = Object.values(errors)
-                        .flat() 
-                        .join('\n'); 
+                    let errorMessage = 'Failed to update password';
+                    if (errors) {
+                        errorMessage = Object.values(errors)
+                            .flat() 
+                            .join('\n'); 
+                    }
+
+                    showPopup('Error', errorMessage, 'error');
                 }
-
-                showPopup('Error', errorMessage, 'error');
             }
         };
 

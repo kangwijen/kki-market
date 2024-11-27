@@ -38,17 +38,13 @@ class TransactionHeaderController extends Controller
      */
     public function show(TransactionHeader $transactionHeader)
     {
-        $user = Auth::user();
-
-        $isAdmin = $user->role_id === 1;
-        
-        if (!$isAdmin && $transactionHeader->user_id !== $user->id) {
+        if (!Auth::user()->role_id === 1 && $transactionHeader->user_id !== Auth::id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $query = $isAdmin
+        $query = Auth::user()->role_id === 1
             ? TransactionHeader::query()
-            : TransactionHeader::where('user_id', $user->id);
+            : TransactionHeader::where('user_id', Auth::id());
 
         $transactionHeaders = $query->with([
             'transactionDetails.product' => function($query) {

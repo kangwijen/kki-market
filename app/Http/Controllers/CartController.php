@@ -11,14 +11,19 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreCartRequest;
 use App\Http\Requests\UpdateCartRequest;
+use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        if (!Auth::check() || $request->user()->id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
         $cartItems = Cart::with('product.productDetail')
             ->where('user_id', Auth::id())
             ->get();
@@ -41,10 +46,14 @@ class CartController extends Controller
     {   
         try {
             DB::beginTransaction();
+
+            if (!Auth::check() || $request->user()->id !== Auth::id()) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
             
             $existingCartItem = Cart::where('user_id', Auth::id())
                 ->where('product_id', $request->product_id)
-                ->first();
+                ->exists();
 
             if ($existingCartItem) {
                 return response()->json(['message' => 'Product already added to cart'], 400);
@@ -60,7 +69,7 @@ class CartController extends Controller
                 return response()->json(['message' => 'Requested quantity exceeds available stock'], 400);
             }
 
-            $cart = Cart::create([
+            Cart::create([
                 'user_id' => Auth::id(),
                 'product_id' => $request->product_id,
                 'quantity' => $request->quantity,
@@ -101,6 +110,10 @@ class CartController extends Controller
     {
         try {
             DB::beginTransaction();
+
+            if (!Auth::check() || $request->user()->id !== Auth::id()) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
     
             $cart = Cart::where('user_id', Auth::id())
                 ->where('product_id', $product_id)
@@ -133,8 +146,12 @@ class CartController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($product_id)
+    public function destroy(Request $request, $product_id)
     {
+        if (!Auth::check() || $request->user()->id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
         Cart::where('user_id', Auth::id())
             ->where('product_id', $product_id)
             ->delete();
@@ -149,16 +166,14 @@ class CartController extends Controller
     {
         try {
             return DB::transaction(function() {
-                // Lock the user's cart items for update
                 $cartItems = Cart::with('product.productDetail')
                     ->where('user_id', Auth::id())
                     ->lockForUpdate()
                     ->get();
 
-                // Lock the user's balance for update
                 $userDetail = UserDetail::where('user_id', Auth::id())
                     ->lockForUpdate()
-                    ->first();
+                    ->firstOrFail();
 
                 if ($cartItems->isEmpty()) {
                     return response()->json(['message' => 'Cart is empty'], 400);
@@ -219,6 +234,7 @@ class CartController extends Controller
                 ], 200);
             }, 5);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['message' => 'Transaction failed'], 500);
         }
     }

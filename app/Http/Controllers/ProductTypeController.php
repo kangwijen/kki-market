@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProductType;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreProductTypeRequest;
 use App\Http\Requests\UpdateProductTypeRequest;
-use Illuminate\Support\Facades\DB;
 
 class ProductTypeController extends Controller
 {
@@ -31,10 +32,22 @@ class ProductTypeController extends Controller
      */
     public function store(StoreProductTypeRequest $request)
     {
-        return DB::transaction(function() use ($request) {
+        try {
+            DB::beginTransaction();
+
+            if (Auth::user()->role_id !== 1) {
+                return response()->json(['error' => 'You are not authorized to create product types.'], 403);
+            }
+            
             $productType = ProductType::create($request->validated());
+
+            DB::commit();
+
             return response()->json($productType, 201);
-        });
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => 'Failed to create product type: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -58,10 +71,22 @@ class ProductTypeController extends Controller
      */
     public function update(UpdateProductTypeRequest $request, ProductType $productType)
     {
-        return DB::transaction(function() use ($request, $productType) {
+        try {
+            DB::beginTransaction();
+
+            if (Auth::user()->role_id !== 1) {
+                return response()->json(['error' => 'You are not authorized to update product types.'], 403);
+            }
+
             $productType->update($request->validated());
+
+            DB::commit();
+
             return response()->json($productType);
-        });
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => 'Failed to update product type: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -69,13 +94,25 @@ class ProductTypeController extends Controller
      */
     public function destroy(ProductType $productType)
     {
-        return DB::transaction(function() use ($productType) {
+        try {
+            DB::beginTransaction();
+
+            if (Auth::user()->role_id !== 1) {
+                return response()->json(['error' => 'You are not authorized to delete product types.'], 403);
+            }
+
             if ($productType->products()->exists()) {
                 return response()->json(['error' => 'Cannot delete product type with associated products'], 400);
             }
             
             $productType->delete();
+
+            DB::commit();
+
             return response()->json(null, 204);
-        });
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => 'Failed to delete product type: ' . $e->getMessage()], 500);
+        }
     }
 }

@@ -7,7 +7,7 @@ use App\Models\ProductDetail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -36,6 +36,10 @@ class ProductController extends Controller
     {
         try {
             DB::beginTransaction();
+
+            if (Auth::user()->role_id !== 1) {
+                return response()->json(['error' => 'You are not authorized to create products.'], 403);
+            }
 
             $product = Product::create($request->except('product_detail'));
 
@@ -101,8 +105,22 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $product->delete();
-        return response()->json(['message' => 'Product deleted successfully.']);
+        try {
+            DB::beginTransaction();
+
+            if (Auth::user()->role_id !== 1) {
+                return response()->json(['error' => 'You are not authorized to delete this product.'], 403);
+            }
+
+            $product->productDetail()->delete();
+            $product->delete();
+
+            DB::commit();
+            return response()->json(['message' => 'Product deleted successfully.']);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => 'Failed to delete product: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -111,6 +129,10 @@ class ProductController extends Controller
     public function uploadImage(Request $request)
     {
         try {
+            if (Auth::user()->role_id !== 1) {
+                return response()->json(['error' => 'You are not authorized to upload images.'], 403);
+            }
+
             $request->validate([
                 'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             ]);

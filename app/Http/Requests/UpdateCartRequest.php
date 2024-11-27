@@ -20,7 +20,7 @@ class UpdateCartRequest extends FormRequest
         
         $cart = Cart::where('user_id', $this->user()->id)
             ->where('product_id', intval($this->route('product_id')))
-            ->first();
+            ->firstOrFail();
 
         return $cart !== null;
     }

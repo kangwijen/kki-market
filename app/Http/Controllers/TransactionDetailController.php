@@ -62,17 +62,22 @@ class TransactionDetailController extends Controller
      */
     public function update(UpdateTransactionDetailRequest $request, TransactionDetail $transactionDetail)
     {
-        $user = Auth::user();
-        $isAdmin = $user->role_id === 1;
+        try {
+            DB::beginTransaction();
 
-        if (!$isAdmin && $transactionDetail->transactionHeader->user_id !== $user->id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+            if (Auth::user()->role_id !== 1) {
+                return response()->json(['error' => 'You are not authorized to update transaction details.'], 403);
+            }
 
-        return DB::transaction(function() use ($request, $transactionDetail) {
             $transactionDetail->update($request->validated());
+
+            DB::commit();
+
             return response()->json($transactionDetail);
-        });
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => 'Failed to update transaction detail: ' . $e->getMessage()], 500);
+        }
     }
 
     /**

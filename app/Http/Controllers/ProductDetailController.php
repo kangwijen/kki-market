@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProductDetail;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreProductDetailRequest;
 use App\Http\Requests\UpdateProductDetailRequest;
 
@@ -53,6 +54,10 @@ class ProductDetailController extends Controller
      */
     public function update(UpdateProductDetailRequest $request, ProductDetail $productDetail)
     {
+        if (Auth::user()->role_id !== 1) {
+            return response()->json(['error' => 'You are not authorized to update product details.'], 403);
+        }
+        
         $productDetail->update($request->validated());
         return response()->json($productDetail);
     }

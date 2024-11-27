@@ -14,6 +14,8 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         try {
+            DB::beginTransaction();
+
             $request->validate([
                 'username' => ['required', 'string', 'max:255', 'unique:users', 'regex:/^[a-zA-Z0-9_-]+$/'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -28,8 +30,13 @@ class RegisterController extends Controller
                 'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character.'
             ]);
 
-            DB::beginTransaction();
-        
+            if (User::where('email', $request->email)->exists() || User::where('username', $request->username)->exists()) {
+                return response()->json([
+                    'message' => 'Registration failed',
+                    'error' => 'User already exists'
+                ], 409);
+            }
+
             $user = User::create([
                 'username' => $request->username,
                 'email' => $request->email,
@@ -44,8 +51,7 @@ class RegisterController extends Controller
             DB::commit();
             
             return response()->json([
-                'message' => 'Registration successful',
-                'user' => $user
+                'message' => 'Registration successful'
             ], 201);
         } catch (\Exception $e) {
             DB::rollback();

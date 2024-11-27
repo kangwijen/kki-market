@@ -67,14 +67,35 @@ class UserDetailController extends Controller
     {
         try {
             DB::beginTransaction();
+
             if (!Hash::check($request->currentPassword, Auth::user()->password)) {
                 throw ValidationException::withMessages([
                     'currentPassword' => ['The provided password does not match your current password.']
                 ]);
             }
-
             $validated = $request->validated();
-            
+
+            $existingUsername = User::where('id', '!=', Auth::user()->id)
+                ->where('username', $validated['username'])
+                ->first();
+
+            if ($existingUsername) {
+                throw ValidationException::withMessages([
+                    'username' => ['This username is already taken.']
+                ]);
+            }
+
+            $existingEmail = User::where('id', '!=', Auth::user()->id)
+                ->where('email', $validated['email'])
+                ->first();
+
+
+            if ($existingEmail) {
+                throw ValidationException::withMessages([
+                    'email' => ['This email is already taken.']
+                ]);
+            }
+
             unset($validated['currentPassword']);
 
             $user = User::findOrFail(Auth::user()->id);
@@ -94,7 +115,6 @@ class UserDetailController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'message' => 'An error occurred while updating user details',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -108,6 +128,26 @@ class UserDetailController extends Controller
             $validated = $request->validated();
             $user = User::findOrFail($id);
             $userDetail = $user->userDetail;
+
+            $existingUsername = User::where('id', '!=', $id)
+                ->where('username', $validated['username'])
+                ->first();
+
+            if ($existingUsername) {
+                throw ValidationException::withMessages([
+                    'username' => ['This username is already taken.']
+                ]);
+            }
+
+            $existingEmail = User::where('id', '!=', $id)
+                ->where('email', $validated['email'])
+                ->first();
+            
+            if ($existingEmail) {
+                throw ValidationException::withMessages([
+                    'email' => ['This email is already taken.']
+                ]);
+            }
 
             $userFields = ['username', 'email'];
             $userUpdates = array_intersect_key($validated, array_flip($userFields));
@@ -158,27 +198,30 @@ class UserDetailController extends Controller
     public function purchaseCredits(UpdatePurchaseCreditsRequest $request)
     {   
         try {
-            return DB::transaction(function() use ($request) {
-                $user = Auth::user();
-                $userDetail = UserDetail::where('user_id', $user->id)
-                    ->lockForUpdate()
-                    ->first();
+            DB::beginTransaction();
+            $user = Auth::user();
+            $userDetail = UserDetail::where('user_id', $user->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-                $response = Http::timeout(30)
-                    ->post('http://localhost:5001/api/charge', [
-                        'amount' => $request->amount
-                    ]);
+            $response = Http::timeout(30)
+                ->post('http://localhost:5001/api/charge', [
+                    'amount' => $request->amount
+                ]);
 
-                if ($response->failed()) {
-                    throw new \Exception('Payment failed: ' . $response->body());
-                }
+            if ($response->failed()) {
+                throw new \Exception('Payment failed: ' . $response->json('message', 'Error with payment gateway'));
+            }
 
-                $userDetail->balance += $request->amount;
-                $userDetail->save();
+            $userDetail->balance += $request->amount;
+            $userDetail->save();
 
-                return response()->json(['balance' => $userDetail->balance], 200);
-            }, 5);
+            DB::commit();
+
+            return response()->json(['balance' => $userDetail->balance], 200);
+
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
