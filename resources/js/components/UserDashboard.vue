@@ -228,7 +228,6 @@ export default {
             try {
                 const response = await axios.get('/user-details/purchase-history');
                 purchaseHistory.value = response.data;
-                console.log(purchaseHistory.value);
             } catch (error) {
                 showPopup('Error', error.response?.data?.error || 'Failed to fetch purchase history', 'error');
             }
